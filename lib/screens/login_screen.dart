@@ -50,82 +50,84 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(36, 64, 72, 50),
-      body: BlocConsumer<LoginBloc, LoginState>(
-        listener: (context, state) {
-          if (state is LoginSuccess) {
-            UserSession().userId = state.userId;
-            print("This is kullanici vasfi: " + state.kullanici_vasfi);
-            _saveUserData(); // Save user data if login is successful
-            if (state.kullanici_vasfi == "User") {
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      MainScreen(),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    const begin = Offset(1.0, 0.0);
-                    const end = Offset(0.0, 0.0);
-                    const curve = Curves.ease;
-
-                    var tween = Tween(begin: begin, end: end)
-                        .chain(CurveTween(curve: curve));
-                    var offsetAnimation = animation.drive(tween);
-
-                    return SlideTransition(
-                      position: offsetAnimation,
-                      child: child,
-                    );
-                  },
-                ),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(36, 64, 72, 50),
+        body: BlocConsumer<LoginBloc, LoginState>(
+          listener: (context, state) {
+            if (state is LoginSuccess) {
+              UserSession().userId = state.userId;
+              print("This is kullanici vasfi: " + state.kullanici_vasfi);
+              _saveUserData(); // Save user data if login is successful
+              if (state.kullanici_vasfi == "User") {
+                Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        MainScreen(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(1.0, 0.0);
+                      const end = Offset(0.0, 0.0);
+                      const curve = Curves.ease;
+      
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+                      var offsetAnimation = animation.drive(tween);
+      
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
+                  ),
+                );
+              } else if (state.kullanici_vasfi == "Admin") {
+                Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        AdminScreen(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(1.0, 0.0);
+                      const end = Offset(0.0, 0.0);
+                      const curve = Curves.ease;
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+                      var offsetAnimation = animation.drive(tween);
+      
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
+                  ),
+                );
+              }
+            } else if (state is LoginFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.error)),
               );
-            } else if (state.kullanici_vasfi == "Admin") {
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      AdminScreen(),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    const begin = Offset(1.0, 0.0);
-                    const end = Offset(0.0, 0.0);
-                    const curve = Curves.ease;
-                    var tween = Tween(begin: begin, end: end)
-                        .chain(CurveTween(curve: curve));
-                    var offsetAnimation = animation.drive(tween);
-
-                    return SlideTransition(
-                      position: offsetAnimation,
-                      child: child,
-                    );
-                  },
+            }
+          },
+          builder: (context, state) {
+            if (state is LoginLoading) {
+              return Center(
+                child: Container(
+                  color:  Color.fromRGBO(36, 64, 72, 50),
+                  width: 150,
+                  child: LinearProgressIndicator(
+                    backgroundColor: Color.fromRGBO(36, 64, 72, 50),
+                    color: Colors.orange[900],
+                  ),
                 ),
               );
             }
-          } else if (state is LoginFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error)),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is LoginLoading) {
-            return Center(
-              child: Container(
-                color:  Color.fromRGBO(36, 64, 72, 50),
-                width: 150,
-                child: LinearProgressIndicator(
-                  backgroundColor: Color.fromRGBO(36, 64, 72, 50),
-                  color: Colors.orange[900],
-                ),
-              ),
-            );
-          }
-
-          return _buildLoginForm(context);
-        },
+      
+            return _buildLoginForm(context);
+          },
+        ),
       ),
     );
   }

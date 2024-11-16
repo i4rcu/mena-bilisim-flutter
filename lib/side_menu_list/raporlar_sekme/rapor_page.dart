@@ -14,57 +14,61 @@ class ReportsPage extends StatefulWidget {
 class _ReportsPageState extends State<ReportsPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(34, 54, 69, 20),
-      appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: Color.fromRGBO(36, 64, 72, 1),
-        title: Text('Raporlar'),
-      ),
-      body: BlocBuilder<AdminBloc, AdminState>(
-        builder: (context, state) {
-          if (state is KullaniciRaporFetching) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is KullaniciRaporFetched) {
-            List<Raporlar> raporlar = state.raporlar;
-            return GridView.builder(
-              padding: const EdgeInsets.all(8.0),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, // Number of cards per row
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 8.0,
-                childAspectRatio: 1, // Adjust aspect ratio for card size
-              ),
-              itemCount: raporlar.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  color: Color.fromRGBO(36, 64, 72, 1),
-                  child: InkWell(
-                    onTap: () {
-                      // When a report card is tapped, fetch data for the selected report
-                      _fetchReportData(raporlar[index].raporSorgusu!, raporlar[index].raporAdi!);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Center(
-                        child: Text(
-                          raporlar[index].raporAdi!,
-                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
+    return  MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: SafeArea(
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(34, 54, 69, 20),
+        appBar: AppBar(
+          foregroundColor: Colors.white,
+          backgroundColor: Color.fromRGBO(36, 64, 72, 1),
+          title: Text('Raporlar'),
+        ),
+        body: BlocBuilder<AdminBloc, AdminState>(
+          builder: (context, state) {
+            if (state is KullaniciRaporFetching) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is KullaniciRaporFetched) {
+              List<Raporlar> raporlar = state.raporlar;
+              return GridView.builder(
+                padding: const EdgeInsets.all(8.0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3, // Number of cards per row
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  childAspectRatio: 1, // Adjust aspect ratio for card size
+                ),
+                itemCount: raporlar.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: Color.fromRGBO(36, 64, 72, 1),
+                    child: InkWell(
+                      onTap: () {
+                        // When a report card is tapped, fetch data for the selected report
+                        _fetchReportData(raporlar[index].raporSorgusu!, raporlar[index].raporAdi!);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(
+                          child: Text(
+                            raporlar[index].raporAdi!,
+                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            );
-          } else if (state is KullaniciRaporFetchError) {
-            return Center(child: Text('Failed to load reports.'));
-          }
-          return Center(child: Text('No reports available.'));
-        },
+                  );
+                },
+              );
+            } else if (state is KullaniciRaporFetchError) {
+              return Center(child: Text('Failed to load reports.'));
+            }
+            return Center(child: Text('No reports available.'));
+          },
+        ),
       ),
-    );
+    ));
   }
 
   // Method to fetch report data based on the selected report's query

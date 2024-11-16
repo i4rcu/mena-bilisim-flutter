@@ -48,45 +48,47 @@ class MainScreen extends StatelessWidget {
           BlocProvider(create: (context) => AdminBloc(ApiHandler())..add(FetchYetkiler(UserSession().userId!))),
         ],
         child:
-         Scaffold(
-          backgroundColor: Color.fromRGBO(34, 54, 69, 100),
-          drawer: !isDesktop
-              ? const SizedBox(
-                  width: 250,
-                  child: SideMenuWidget(),
-                )
-              : const SizedBox(
-                  width: 250,
-                  child: SideMenuWidget(),
-                ),
-          endDrawer: Responsive.isMobile(context)
-              ? SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  //child: const SummaryWidget(),
-                )
-              : null,
-          body: SafeArea(
-            child: Row(
-              children: [
-                if (isDesktop)
-                  Expanded(
-                    flex: 2,
-                    child: SizedBox(
-                      child: SideMenuWidget(),
-                    ),
+         SafeArea(
+           child: Scaffold(
+            backgroundColor: Color.fromRGBO(34, 54, 69, 100),
+            drawer: !isDesktop
+                ? const SizedBox(
+                    width: 250,
+                    child: SideMenuWidget(),
+                  )
+                : const SizedBox(
+                    width: 250,
+                    child: SideMenuWidget(),
                   ),
-                Expanded(
-                  flex: 9,
-                  child: DashboardWidget(),
-                ),
-                /*if (isDesktop)
+            endDrawer: Responsive.isMobile(context)
+                ? SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    //child: const SummaryWidget(),
+                  )
+                : null,
+            body: SafeArea(
+              child: Row(
+                children: [
+                  if (isDesktop)
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(
+                        child: SideMenuWidget(),
+                      ),
+                    ),
                   Expanded(
-                    flex: 1,
-                    child: SummaryWidget(),
-                  ),*/
-              ],
+                    flex: 9,
+                    child: DashboardWidget(),
+                  ),
+                  /*if (isDesktop)
+                    Expanded(
+                      flex: 1,
+                      child: SummaryWidget(),
+                    ),*/
+                ],
+              ),
             ),
-          ),
-        )));
+                   ),
+         )));
   }
 }

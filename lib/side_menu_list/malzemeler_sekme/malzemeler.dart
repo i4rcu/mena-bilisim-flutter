@@ -12,130 +12,134 @@ import 'package:fitness_dashboard_ui/bloc/bloc/malzemeler_bloc/malzemeler_bloc.d
 class MalzemelerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(35, 55, 69, 1),
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
+    return  MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: SafeArea(
+      child: Scaffold(
         backgroundColor: Color.fromRGBO(35, 55, 69, 1),
-        title: Text(
-          'Malzemeler',
-          style: TextStyle(color: Colors.white),
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Color.fromRGBO(35, 55, 69, 1),
+          title: Text(
+            'Malzemeler',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: GridView.count(
+            crossAxisCount: 2, // Number of columns
+            crossAxisSpacing: 16.0, // Spacing between columns
+            mainAxisSpacing: 16.0, // Spacing between rows
+            childAspectRatio: 3 / 2, // Aspect ratio for card (adjust as needed)
+            children: [
+              _buildMenuCard(
+                context,
+                title: 'Hareket Görmeyen Malzemeler',
+                color: Color.fromRGBO(65, 190, 184, 1),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (_) =>
+                            MalzemelerBloc(ApiHandler())..add(FetchHmalzeme()),
+                        child: AllItemsPage(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              _buildMenuCard(
+                context,
+                title: 'Hangi Malzeme Kime Satıldı',
+                color: Color.fromRGBO(241, 108, 39, 1),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (_) => MalzemelerBloc(ApiHandler())
+                          ..add(FetchSatilanMalzeme()),
+                        child: SatilanMalzemePage(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              _buildMenuCard(
+                context,
+                title: 'Tüm Malzemeler',
+                color: Color.fromRGBO(59, 180, 115, 1),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (_) => MalzemelerBloc(ApiHandler())
+                          ..add(fetchTumMalzemeler()),
+                        child: TumMalzemelerPage(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              _buildMenuCard(
+                context,
+                title: 'En Çok Satılan Malzemeler',
+                color: Color.fromRGBO(123, 104, 238, 1),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (_) => MalzemelerBloc(ApiHandler())
+                          ..add(fetchEnCokSatilanMalzemeler("","","0")),
+                        child: EnCokSatilanMalzemeListPage(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              _buildMenuCard(
+                context,
+                title: 'Günlük Malzeme Satışı',
+                color: Color.fromRGBO(255, 159, 64, 1),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (_) => MalzemelerBloc(ApiHandler())
+                          ..add(fetchGunlukMalzemeSatisi("","","0")),
+                        child: GunlukMalzemeSatisiListPage(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              _buildMenuCard(
+                context,
+                title: 'Günlük Malzeme Alışı',
+                color: Color.fromRGBO(2, 144, 154, 1),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (_) => MalzemelerBloc(ApiHandler())
+                          ..add(fetchGunlukMalzemeAlisi("","","0")),
+                        child: GunlukMalzemeAlisiListPage(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: GridView.count(
-          crossAxisCount: 2, // Number of columns
-          crossAxisSpacing: 16.0, // Spacing between columns
-          mainAxisSpacing: 16.0, // Spacing between rows
-          childAspectRatio: 3 / 2, // Aspect ratio for card (adjust as needed)
-          children: [
-            _buildMenuCard(
-              context,
-              title: 'Hareket Görmeyen Malzemeler',
-              color: Color.fromRGBO(65, 190, 184, 1),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (_) =>
-                          MalzemelerBloc(ApiHandler())..add(FetchHmalzeme()),
-                      child: AllItemsPage(),
-                    ),
-                  ),
-                );
-              },
-            ),
-            _buildMenuCard(
-              context,
-              title: 'Hangi Malzeme Kime Satıldı',
-              color: Color.fromRGBO(241, 108, 39, 1),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (_) => MalzemelerBloc(ApiHandler())
-                        ..add(FetchSatilanMalzeme()),
-                      child: SatilanMalzemePage(),
-                    ),
-                  ),
-                );
-              },
-            ),
-            _buildMenuCard(
-              context,
-              title: 'Tüm Malzemeler',
-              color: Color.fromRGBO(59, 180, 115, 1),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (_) => MalzemelerBloc(ApiHandler())
-                        ..add(fetchTumMalzemeler()),
-                      child: TumMalzemelerPage(),
-                    ),
-                  ),
-                );
-              },
-            ),
-            _buildMenuCard(
-              context,
-              title: 'En Çok Satılan Malzemeler',
-              color: Color.fromRGBO(123, 104, 238, 1),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (_) => MalzemelerBloc(ApiHandler())
-                        ..add(fetchEnCokSatilanMalzemeler("","","0")),
-                      child: EnCokSatilanMalzemeListPage(),
-                    ),
-                  ),
-                );
-              },
-            ),
-            _buildMenuCard(
-              context,
-              title: 'Günlük Malzeme Satışı',
-              color: Color.fromRGBO(255, 159, 64, 1),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (_) => MalzemelerBloc(ApiHandler())
-                        ..add(fetchGunlukMalzemeSatisi("","","0")),
-                      child: GunlukMalzemeSatisiListPage(),
-                    ),
-                  ),
-                );
-              },
-            ),
-            _buildMenuCard(
-              context,
-              title: 'Günlük Malzeme Alışı',
-              color: Color.fromRGBO(2, 144, 154, 1),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (_) => MalzemelerBloc(ApiHandler())
-                        ..add(fetchGunlukMalzemeAlisi("","","0")),
-                      child: GunlukMalzemeAlisiListPage(),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+    ));
   }
 
   Widget _buildMenuCard(BuildContext context, {required String title, required Color color, required VoidCallback onTap}) {

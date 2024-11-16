@@ -49,7 +49,9 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
     return BlocProvider(
       create: (context) =>
           AdminBloc(ApiHandler())..add(FetchYetkiler(UserSession().userId!)),
-      child: BlocBuilder<AdminBloc, AdminState>(
+      child:MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: BlocBuilder<AdminBloc, AdminState>(
         builder: (context, state) {
           if (state is YetkilerFetched) {
             yetki = state
@@ -140,7 +142,7 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
           }
         },
       ),
-    );
+    ));
   }
 
   

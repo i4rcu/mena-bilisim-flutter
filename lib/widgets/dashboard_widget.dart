@@ -38,7 +38,9 @@ class DashboardWidget extends StatelessWidget {
             create: (context) =>
                 CariHesapBloc(ApiHandler())..add(fetchEnCokSatilanCairler("", "","1"))),
       ],
-      child: SingleChildScrollView(
+      child : MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Column(
@@ -115,6 +117,6 @@ class DashboardWidget extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }

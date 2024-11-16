@@ -35,25 +35,29 @@ class _SatilanMalzemePageState extends State<SatilanMalzemePage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => _MalzemeBloc,
+      child:  MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          foregroundColor: Colors.white,
-          title: Text('Hangi Malzeme Kime Satıldı'),
+          appBar: AppBar(
+            foregroundColor: Colors.white,
+            title: Text('Hangi Malzeme Kime Satıldı'),
+            backgroundColor: Color.fromRGBO(36, 64, 72, 1),
+          ),
           backgroundColor: Color.fromRGBO(36, 64, 72, 1),
-        ),
-        backgroundColor: Color.fromRGBO(36, 64, 72, 1),
-        body: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Column(
-            children: [
-              _buildSearchBar(),
-              SizedBox(height: 10),
-              Expanded(child: _buildDataTable()),
-            ],
+          body: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              children: [
+                _buildSearchBar(),
+                SizedBox(height: 10),
+                Expanded(child: _buildDataTable()),
+              ],
+            ),
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildSearchBar() {

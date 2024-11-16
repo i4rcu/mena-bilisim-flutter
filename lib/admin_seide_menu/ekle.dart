@@ -93,170 +93,174 @@ class _KullaniciEkleState extends State<KullaniciEkle> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AdminBloc(ApiHandler()),
-      child: Scaffold(
-        appBar: AppBar(
-          foregroundColor: Colors.white,
-          title: Text('Kullanıcı Ekle',style: TextStyle(color: Colors.white),),
-          backgroundColor: Color.fromRGBO(36, 64, 72, 1),
-        ),
-              backgroundColor: Color.fromRGBO(36, 64, 72, 1),
-
-        body: BlocListener<AdminBloc, AdminState>(
-          listener: (context, state) {
-            String message;
-
-            if (state is KullaniciAdded) {
-              message = 'Kullanıcı başarıyla eklendi.';
-              Navigator.of(context).pop(); // Close page on success
-
-              // Fetch users again after successful update
-              context.read<AdminBloc>().add(FetchKullanicilar());
-            } else if (state is KullaniciAddError) {
-              message = 'Kullanıcı eklenemedi. Lütfen tekrar deneyin.';
-            } else {
-              return; // Do nothing for other states
-            }
-
-            // Show the SnackBar
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(message),
-            ));
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  // Kullanici Ad Text Field
-                  TextField(
-                    controller: _kullaniciAdController,
-                    decoration: InputDecoration(
-                      labelText: 'Kullanıcı Adı',
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(),
-                    ),
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  SizedBox(height: 16.0),
-                  // Sifre Text Field
-                  TextField(
-                    controller: _sifreController,
-                    decoration: InputDecoration(
-                      labelText: 'Şifre',
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(),
-                    ),
-                    style: TextStyle(color: Colors.white),
-                    obscureText: true, // Hide password input
-                  ),
-                  SizedBox(height: 16.0),
-                  // Lisans Tarihi Date Picker
-                  TextField(
-                    controller: _lisansTarihiController,
-                    decoration: InputDecoration(
-                      labelText: 'Lisans Tarihi',
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(),
-                    ),
-                    onTap: () => _selectDate(context, _lisansTarihiController),
-                    style: TextStyle(color: Colors.white),
-                    readOnly: true, // Opens date picker on tap
-                  ),
-                  SizedBox(height: 16.0),
-                  // Lisans Bitis Tarihi Date Picker
-                  TextField(
-                    controller: _lisansBitisTarihiController,
-                    decoration: InputDecoration(
-                      labelText: 'Lisans Bitiş Tarihi',
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(),
-                    ),
-                    onTap: () =>
-                        _selectDate(context, _lisansBitisTarihiController),
-                    style: TextStyle(color: Colors.white),
-                    readOnly: true, // Opens date picker on tap
-                  ),
-                  SizedBox(height: 16.0),
-                  // Checkboxes
-                  Column(
-  children: List.generate(_checkboxOptions.length, (index) {
-    return Padding(
-      padding: const EdgeInsets.all(3.0),
-      child: CheckboxListTile(
-        title: Text(_checkboxOptions[index],style: TextStyle(color: Colors.white),),
-        value: _checkboxValues[index],
-        onChanged: (bool? value) {
-          setState(() {
-            _checkboxValues[index] = value ?? false;
-          });
-        },
-        activeColor: Color.fromRGBO(241, 108, 39, 1), // Checked color
-        tileColor: Color.fromRGBO(54, 78, 96, 0.2), // Background color
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0), // Optional: Rounded corners
-        ),
+      child:  MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: SafeArea(
+      child:Scaffold(
+          appBar: AppBar(
+            foregroundColor: Colors.white,
+            title: Text('Kullanıcı Ekle',style: TextStyle(color: Colors.white),),
+            backgroundColor: Color.fromRGBO(36, 64, 72, 1),
+          ),
+                backgroundColor: Color.fromRGBO(36, 64, 72, 1),
         
-      ),
-    );
-  }),
-),
-                  SizedBox(height: 16.0),
-                  // Submit Button
-                  ElevatedButton(
-                    child: Text('Ekle',style: TextStyle(color: Colors.white,fontSize: 16)),
-                                          style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color.fromRGBO(241, 108, 39, 20))),
-
-                    onPressed: () {
-  if (_validateInputs()) {
-    Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => BlocProvider(
-              create: (context) => AdminBloc(ApiHandler())..add(FetchKullanicilar()),
-              child: AdminScreen(),
-            ),
+          body: BlocListener<AdminBloc, AdminState>(
+            listener: (context, state) {
+              String message;
+        
+              if (state is KullaniciAdded) {
+                message = 'Kullanıcı başarıyla eklendi.';
+                Navigator.of(context).pop(); // Close page on success
+        
+                // Fetch users again after successful update
+                context.read<AdminBloc>().add(FetchKullanicilar());
+              } else if (state is KullaniciAddError) {
+                message = 'Kullanıcı eklenemedi. Lütfen tekrar deneyin.';
+              } else {
+                return; // Do nothing for other states
+              }
+        
+              // Show the SnackBar
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(message),
+              ));
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    // Kullanici Ad Text Field
+                    TextField(
+                      controller: _kullaniciAdController,
+                      decoration: InputDecoration(
+                        labelText: 'Kullanıcı Adı',
+                        labelStyle: TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(),
+                      ),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(height: 16.0),
+                    // Sifre Text Field
+                    TextField(
+                      controller: _sifreController,
+                      decoration: InputDecoration(
+                        labelText: 'Şifre',
+                        labelStyle: TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(),
+                      ),
+                      style: TextStyle(color: Colors.white),
+                      obscureText: true, // Hide password input
+                    ),
+                    SizedBox(height: 16.0),
+                    // Lisans Tarihi Date Picker
+                    TextField(
+                      controller: _lisansTarihiController,
+                      decoration: InputDecoration(
+                        labelText: 'Lisans Tarihi',
+                        labelStyle: TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(),
+                      ),
+                      onTap: () => _selectDate(context, _lisansTarihiController),
+                      style: TextStyle(color: Colors.white),
+                      readOnly: true, // Opens date picker on tap
+                    ),
+                    SizedBox(height: 16.0),
+                    // Lisans Bitis Tarihi Date Picker
+                    TextField(
+                      controller: _lisansBitisTarihiController,
+                      decoration: InputDecoration(
+                        labelText: 'Lisans Bitiş Tarihi',
+                        labelStyle: TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(),
+                      ),
+                      onTap: () =>
+                          _selectDate(context, _lisansBitisTarihiController),
+                      style: TextStyle(color: Colors.white),
+                      readOnly: true, // Opens date picker on tap
+                    ),
+                    SizedBox(height: 16.0),
+                    // Checkboxes
+                    Column(
+          children: List.generate(_checkboxOptions.length, (index) {
+            return Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: CheckboxListTile(
+          title: Text(_checkboxOptions[index],style: TextStyle(color: Colors.white),),
+          value: _checkboxValues[index],
+          onChanged: (bool? value) {
+            setState(() {
+              _checkboxValues[index] = value ?? false;
+            });
+          },
+          activeColor: Color.fromRGBO(241, 108, 39, 1), // Checked color
+          tileColor: Color.fromRGBO(54, 78, 96, 0.2), // Background color
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0), // Optional: Rounded corners
           ),
-        );
-    // Parse and convert dates to yyyy-MM-dd format
-    DateTime lisansTarihi = DateFormat('dd/MM/yyyy').parse(_lisansTarihiController.text);
-    DateTime lisansBitisTarihi = DateFormat('dd/MM/yyyy').parse(_lisansBitisTarihiController.text);
-
-    // Format the dates to yyyy-MM-dd
-    String formattedLisansTarihi = DateFormat('yyyy-MM-dd').format(lisansTarihi);
-    String formattedLisansBitisTarihi = DateFormat('yyyy-MM-dd').format(lisansBitisTarihi);
-
-    // Trigger AddKullanici event with formatted dates using existing Bloc
-    context.read<AdminBloc>().add(
-      AddKullanici(
-        _kullaniciAdController.text,
-        EncryptionHelper.encryptPassword(_sifreController.text),
-        formattedLisansTarihi,  // Passing formatted lisansTarihi
-        formattedLisansBitisTarihi,  // Passing formatted lisansBitisTarihi
-        _checkboxValues,  // Checkbox values
-      ),
-    );
-  }
-    ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(content: Text('Kullanıcı Bilgileri Başarıyla Eklendi.')),);
-  Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => BlocProvider(
-              create: (context) => AdminBloc(ApiHandler())..add(FetchKullanicilar()),
-              child: AdminScreen(),
+          
+        ),
+            );
+          }),
+        ),
+                    SizedBox(height: 16.0),
+                    // Submit Button
+                    ElevatedButton(
+                      child: Text('Ekle',style: TextStyle(color: Colors.white,fontSize: 16)),
+                                            style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color.fromRGBO(241, 108, 39, 20))),
+        
+                      onPressed: () {
+          if (_validateInputs()) {
+            Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                create: (context) => AdminBloc(ApiHandler())..add(FetchKullanicilar()),
+                child: AdminScreen(),
+              ),
             ),
-          ),
-        );
-  
-},
-
-
-                  ),
-                ],
+          );
+            // Parse and convert dates to yyyy-MM-dd format
+            DateTime lisansTarihi = DateFormat('dd/MM/yyyy').parse(_lisansTarihiController.text);
+            DateTime lisansBitisTarihi = DateFormat('dd/MM/yyyy').parse(_lisansBitisTarihiController.text);
+        
+            // Format the dates to yyyy-MM-dd
+            String formattedLisansTarihi = DateFormat('yyyy-MM-dd').format(lisansTarihi);
+            String formattedLisansBitisTarihi = DateFormat('yyyy-MM-dd').format(lisansBitisTarihi);
+        
+            // Trigger AddKullanici event with formatted dates using existing Bloc
+            context.read<AdminBloc>().add(
+        AddKullanici(
+          _kullaniciAdController.text,
+          EncryptionHelper.encryptPassword(_sifreController.text),
+          formattedLisansTarihi,  // Passing formatted lisansTarihi
+          formattedLisansBitisTarihi,  // Passing formatted lisansBitisTarihi
+          _checkboxValues,  // Checkbox values
+        ),
+            );
+          }
+            ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Kullanıcı Bilgileri Başarıyla Eklendi.')),);
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                create: (context) => AdminBloc(ApiHandler())..add(FetchKullanicilar()),
+                child: AdminScreen(),
+              ),
+            ),
+          );
+          
+        },
+        
+        
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    );
+    ));
   }
 
   @override

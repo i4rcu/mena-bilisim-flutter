@@ -58,29 +58,33 @@ class _CekVeSenetPageState extends State<CekVeSenetPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => _cekveSenetBloc,
+      child:  MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          foregroundColor: Colors.white,
-          title: Text('Çek ve Senetler'),
+          appBar: AppBar(
+            foregroundColor: Colors.white,
+            title: Text('Çek ve Senetler'),
+            backgroundColor: Color.fromRGBO(36, 64, 72, 1),
+          ),
           backgroundColor: Color.fromRGBO(36, 64, 72, 1),
-        ),
-        backgroundColor: Color.fromRGBO(36, 64, 72, 1),
-        body: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Column(
-            children: [
-              _buildSearchBar(),
-              SizedBox(height: 10),
-              _buildDatePickers(),
-              SizedBox(height: 10),
-              _buildDropdown(),
-              SizedBox(height: 20),
-              Expanded(child: _buildDataTable()),
-            ],
+          body: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              children: [
+                _buildSearchBar(),
+                SizedBox(height: 10),
+                _buildDatePickers(),
+                SizedBox(height: 10),
+                _buildDropdown(),
+                SizedBox(height: 20),
+                Expanded(child: _buildDataTable()),
+              ],
+            ),
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildSearchBar() {

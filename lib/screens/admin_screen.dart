@@ -38,32 +38,34 @@ class AdminScreen extends StatelessWidget {
            BlocProvider(create: (context) => AdminBloc(ApiHandler()))
         ],
         child:
-         Scaffold(
-          backgroundColor: Color.fromRGBO(34, 54, 69, 100),
-          drawer: !isDesktop
-              ? const SizedBox(
-                  width: 250,
-                  //child: AdminSideMenuWidget(),
-                )
-              : null,
-          endDrawer: Responsive.isMobile(context)
-              ? SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  //child: const SummaryWidget(),
-                )
-              : null,
-          body: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  flex: 7,
-                  child: AdminDashboardWidget(),
-                ),
-              ],
+         SafeArea(
+           child: Scaffold(
+            backgroundColor: Color.fromRGBO(34, 54, 69, 100),
+            drawer: !isDesktop
+                ? const SizedBox(
+                    width: 250,
+                    //child: AdminSideMenuWidget(),
+                  )
+                : null,
+            endDrawer: Responsive.isMobile(context)
+                ? SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    //child: const SummaryWidget(),
+                  )
+                : null,
+            body: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 7,
+                    child: AdminDashboardWidget(),
+                  ),
+                ],
+              ),
             ),
-          ),
-        )));
+                   ),
+         )));
   }
 }

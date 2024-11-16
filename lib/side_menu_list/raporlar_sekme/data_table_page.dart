@@ -25,36 +25,40 @@ class ReportDataPage extends StatelessWidget {
     // Extract the headers from the data (keys of the first row)
     List<String> headers = data[0].keys.toList();
 
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(34, 54, 69, 20),
-      appBar: AppBar(
-        title: Text(name),
-        foregroundColor: Colors.white,
-        backgroundColor: Color.fromRGBO(36, 64, 72, 1),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical, // Enable vertical scrolling
+    return  MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: SafeArea(
+      child:Scaffold(
+        backgroundColor: Color.fromRGBO(34, 54, 69, 20),
+        appBar: AppBar(
+          title: Text(name),
+          foregroundColor: Colors.white,
+          backgroundColor: Color.fromRGBO(36, 64, 72, 1),
+        ),
+        body: Center(
           child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal, // Enable horizontal scrolling
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DataTable(
-                columns: headers.map((header) => DataColumn(
-                  label: Text(header, style: TextStyle(color: Colors.white)),
-                )).toList(),
-                rows: data.map((row) {
-                  return DataRow(
-                    cells: row.values.map((value) => DataCell(
-                      Text(value.toString(), style: TextStyle(color: Colors.white)),
-                    )).toList(),
-                  );
-                }).toList(),
+            scrollDirection: Axis.vertical, // Enable vertical scrolling
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: DataTable(
+                  columns: headers.map((header) => DataColumn(
+                    label: Text(header, style: TextStyle(color: Colors.white)),
+                  )).toList(),
+                  rows: data.map((row) {
+                    return DataRow(
+                      cells: row.values.map((value) => DataCell(
+                        Text(value.toString(), style: TextStyle(color: Colors.white)),
+                      )).toList(),
+                    );
+                  }).toList(),
+                ),
               ),
             ),
           ),
         ),
       ),
-    );
+    ));
   }
 }

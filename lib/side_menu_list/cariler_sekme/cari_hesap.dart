@@ -14,73 +14,77 @@ class CariHesapPage extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
     return BlocProvider(
       create: (context) => CariHesapBloc(ApiHandler())..add(fetchEnCokSatilanCairler("tablePrefix", "tableSuffix", "1")),
+      child:  MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: SafeArea(
       child: Scaffold(
-        backgroundColor: Color.fromRGBO(35, 55, 69, 10),
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: Color.fromRGBO(35, 55, 69, 10),
-          title: Text(
-            'Cari Hesaplar',
-            style: TextStyle(color: Colors.white),
+          appBar: AppBar(
+            iconTheme: IconThemeData(color: Colors.white),
+            backgroundColor: Color.fromRGBO(35, 55, 69, 10),
+            title: Text(
+              'Cari Hesaplar',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildMenuCard(
-                context,
-                title: "Cari Hesaplar",
-                color: Color.fromRGBO(65, 190, 184, 20), // First card color
-                onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CariHesapListPage()),
-                    );
-                  },
-              ),
-              SizedBox(height: screenHeight * 0.02),
-               _buildMenuCard(
-                context,
-                title: "En Çok Satış Yapılan Cari Hesaplar Tutar Bazlı",
-                color:Color.fromRGBO(241, 108, 39, 20), 
-                onTap: () {
-                Navigator.push(
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildMenuCard(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (context) => CariHesapBloc(ApiHandler())..add(
-                        fetchEnCokSatilanCairler("tablePrefix", "tableSuffix", "0"), // Replace with actual parameters
+                  title: "Cari Hesaplar",
+                  color: Color.fromRGBO(65, 190, 184, 20), // First card color
+                  onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CariHesapListPage()),
+                      );
+                    },
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                 _buildMenuCard(
+                  context,
+                  title: "En Çok Satış Yapılan Cari Hesaplar Tutar Bazlı",
+                  color:Color.fromRGBO(241, 108, 39, 20), 
+                  onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (context) => CariHesapBloc(ApiHandler())..add(
+                          fetchEnCokSatilanCairler("tablePrefix", "tableSuffix", "0"), // Replace with actual parameters
+                        ),
+                        child: EnCokSatilanCariHesapListPage(),
                       ),
-                      child: EnCokSatilanCariHesapListPage(),
                     ),
-                  ),
-                );
-              },
-
-              ),
-              SizedBox(height: screenHeight * 0.02),
-               _buildMenuCard(
-                context,
-                title: "Cari Hesaplar",
-                color: Color.fromRGBO(59, 180, 115, 20), // Third card color
-                onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CariHesapListPage()),
-                    );
-                  },
-              ),
+                  );
+                },
+        
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                 _buildMenuCard(
+                  context,
+                  title: "Cari Hesaplar",
+                  color: Color.fromRGBO(59, 180, 115, 20), // Third card color
+                  onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CariHesapListPage()),
+                      );
+                    },
+                ),
+                  
                 
-              
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    );
+    ));
   }
   Widget _buildMenuCard(BuildContext context, {required String title, required Color color, required VoidCallback onTap}) {
     return Expanded(

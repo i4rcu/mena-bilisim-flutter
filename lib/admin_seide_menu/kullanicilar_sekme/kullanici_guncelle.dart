@@ -93,134 +93,101 @@ class _KullaniciGuncelleState extends State<KullaniciGuncelle> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.white,
-        title:
-            Text('Kullanıcı Güncelle', style: TextStyle(color: Colors.white)),
+    return  MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: SafeArea(
+      child:Scaffold(
+        appBar: AppBar(
+          foregroundColor: Colors.white,
+          title:
+              Text('Kullanıcı Güncelle', style: TextStyle(color: Colors.white)),
+          backgroundColor: Color.fromRGBO(36, 64, 72, 1),
+        ),
         backgroundColor: Color.fromRGBO(36, 64, 72, 1),
-      ),
-      backgroundColor: Color.fromRGBO(36, 64, 72, 1),
-      body: BlocProvider(
-        create: (context) =>
-            AdminBloc(ApiHandler())..add(FetchYetkiler(widget.id!)),
-        child: BlocListener<AdminBloc, AdminState>(
-          listener: (context, state) {
-            if (state is YetkilerFetched) {
-              if (state.checkboxes.length == _menuCheckboxValues.length) {
-                setState(() {
-                  _menuCheckboxValues = state.checkboxes;
-                });
+        body: BlocProvider(
+          create: (context) =>
+              AdminBloc(ApiHandler())..add(FetchYetkiler(widget.id!)),
+          child: BlocListener<AdminBloc, AdminState>(
+            listener: (context, state) {
+              if (state is YetkilerFetched) {
+                if (state.checkboxes.length == _menuCheckboxValues.length) {
+                  setState(() {
+                    _menuCheckboxValues = state.checkboxes;
+                  });
+                }
               }
-            }
-          },
-          child: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus();
             },
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    TextField(
-                      controller: _kullaniciAdController,
-                      decoration: InputDecoration(
-                        labelText: 'Kullanıcı Adı',
-                        labelStyle: TextStyle(color: Colors.white),
-                        border: OutlineInputBorder(),
+            child: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      TextField(
+                        controller: _kullaniciAdController,
+                        decoration: InputDecoration(
+                          labelText: 'Kullanıcı Adı',
+                          labelStyle: TextStyle(color: Colors.white),
+                          border: OutlineInputBorder(),
+                        ),
+                        style: TextStyle(color: Colors.white),
                       ),
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    SizedBox(height: 16.0),
-                    TextField(
-                      controller: _sifreController,
-                      decoration: InputDecoration(
-                        labelText: 'Şifre',
-                        labelStyle: TextStyle(color: Colors.white),
-                        border: OutlineInputBorder(),
+                      SizedBox(height: 16.0),
+                      TextField(
+                        controller: _sifreController,
+                        decoration: InputDecoration(
+                          labelText: 'Şifre',
+                          labelStyle: TextStyle(color: Colors.white),
+                          border: OutlineInputBorder(),
+                        ),
+                        style: TextStyle(color: Colors.white),
+                        obscureText: true,
                       ),
-                      style: TextStyle(color: Colors.white),
-                      obscureText: true,
-                    ),
-                    SizedBox(height: 16.0),
-                    TextField(
-                      controller: _lisansTarihiController,
-                      decoration: InputDecoration(
-                        labelText: 'Lisans Tarihi',
-                        labelStyle: TextStyle(color: Colors.white),
-                        border: OutlineInputBorder(),
+                      SizedBox(height: 16.0),
+                      TextField(
+                        controller: _lisansTarihiController,
+                        decoration: InputDecoration(
+                          labelText: 'Lisans Tarihi',
+                          labelStyle: TextStyle(color: Colors.white),
+                          border: OutlineInputBorder(),
+                        ),
+                        onTap: () =>
+                            _selectDate(context, _lisansTarihiController),
+                        style: TextStyle(color: Colors.white),
+                        readOnly: true,
                       ),
-                      onTap: () =>
-                          _selectDate(context, _lisansTarihiController),
-                      style: TextStyle(color: Colors.white),
-                      readOnly: true,
-                    ),
-                    SizedBox(height: 16.0),
-                    TextField(
-                      controller: _lisansBitisTarihiController,
-                      decoration: InputDecoration(
-                        labelText: 'Lisans Bitiş Tarihi',
-                        labelStyle: TextStyle(color: Colors.white),
-                        border: OutlineInputBorder(),
+                      SizedBox(height: 16.0),
+                      TextField(
+                        controller: _lisansBitisTarihiController,
+                        decoration: InputDecoration(
+                          labelText: 'Lisans Bitiş Tarihi',
+                          labelStyle: TextStyle(color: Colors.white),
+                          border: OutlineInputBorder(),
+                        ),
+                        onTap: () =>
+                            _selectDate(context, _lisansBitisTarihiController),
+                        style: TextStyle(color: Colors.white),
+                        readOnly: true,
                       ),
-                      onTap: () =>
-                          _selectDate(context, _lisansBitisTarihiController),
-                      style: TextStyle(color: Colors.white),
-                      readOnly: true,
-                    ),
-                    SizedBox(height: 16.0),
-
-                    Text('Menü Yetkileri',
-                        style: TextStyle(color: Colors.white)),
-                    Column(
-                      children:
-                          List.generate(_menuCheckboxOptions.length, (index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(3.0),
-                          child: CheckboxListTile(
-                            title: Text(_menuCheckboxOptions[index],
-                                style: TextStyle(color: Colors.white)),
-                            value: _menuCheckboxValues[index],
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _menuCheckboxValues[index] = value ?? false;
-                              });
-                            },
-                            activeColor: Color.fromRGBO(
-                                241, 108, 39, 1), // Checked color
-                            tileColor: Color.fromRGBO(
-                                54, 78, 96, 0.2), // Background color
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  8.0), // Optional: Rounded corners
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-
-                    SizedBox(height: 16.0),
-
-                    if (widget.rapor_yetkileri != null &&
-                        widget.rapor_yetkileri!.isNotEmpty) ...[
-                      Text('Rapor Yetkileri',
+                      SizedBox(height: 16.0),
+      
+                      Text('Menü Yetkileri',
                           style: TextStyle(color: Colors.white)),
                       Column(
-                        children: List.generate(widget.rapor_yetkileri!.length,
-                            (index) {
+                        children:
+                            List.generate(_menuCheckboxOptions.length, (index) {
                           return Padding(
                             padding: const EdgeInsets.all(3.0),
                             child: CheckboxListTile(
-                              title: Text(
-                                widget.rapor_yetkileri![index].raporAdi ??
-                                    "Unknown Rapor",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              value: _raporCheckboxValues[index],
+                              title: Text(_menuCheckboxOptions[index],
+                                  style: TextStyle(color: Colors.white)),
+                              value: _menuCheckboxValues[index],
                               onChanged: (bool? value) {
                                 setState(() {
-                                  _raporCheckboxValues[index] = value ?? false;
+                                  _menuCheckboxValues[index] = value ?? false;
                                 });
                               },
                               activeColor: Color.fromRGBO(
@@ -235,87 +202,124 @@ class _KullaniciGuncelleState extends State<KullaniciGuncelle> {
                           );
                         }),
                       ),
-                    ] else ...[
-                      // Optionally show a message when there are no rapor yetkileri
-                      Text('Henüz Rapor Bulunmamaktadır',
-                          style: TextStyle(color: Colors.white)),
-                    ],
-
-                    SizedBox(height: 16.0),
-
-                    SizedBox(height: 16.0),
-                    ElevatedButton(
-                      child: Text('Güncelle',
-                          style: TextStyle(color: Colors.white, fontSize: 16)),
-                      style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(
-                              Color.fromRGBO(241, 108, 39, 1))),
-                      onPressed: () {
-                        if (_validateInputs()) {
-                          DateTime lisansTarihi = DateFormat('dd/MM/yyyy')
-                              .parse(_lisansTarihiController.text);
-                          DateTime lisansBitisTarihi = DateFormat('dd/MM/yyyy')
-                              .parse(_lisansBitisTarihiController.text);
-
-                          String formattedLisansTarihi =
-                              DateFormat('yyyy-MM-dd').format(lisansTarihi);
-                          String formattedLisansBitisTarihi =
-                              DateFormat('yyyy-MM-dd')
-                                  .format(lisansBitisTarihi);
-
-                          // Update yetki values based on checkboxes
-                          List<bool> yetkiler = _menuCheckboxValues
-                              .map((checked) => checked ? true : false)
-                              .toList();
-
-                          // Collect report authority changes
-                          List<RaporYetkiler> updatedRaporYetkileri = widget
-                              .rapor_yetkileri!
-                              .asMap()
-                              .entries
-                              .map((entry) {
-                            int index = entry.key;
-                            RaporYetkiler rapor = entry.value;
-                            rapor.yetki = _raporCheckboxValues[index] ? 1 : 0;
-                            rapor.raporAdi =
-                                widget.rapor_yetkileri![index].raporAdi;
-                            rapor.raporId =
-                                widget.rapor_yetkileri![index].raporId;
-                            rapor.raporSorgusu =
-                                widget.rapor_yetkileri![index].raporSorgusu;
-                            return rapor;
-                          }).toList();
-                          // Add update user event with the updated data
-                          context.read<AdminBloc>().add(UpdateKullanici(
-                                widget.id!,
-                                _kullaniciAdController.text,
-                                EncryptionHelper.encryptPassword(
-                                    _sifreController.text),
-                                formattedLisansTarihi,
-                                formattedLisansBitisTarihi,
-                                yetkiler,
-                                updatedRaporYetkileri,
-                              ));
-                             Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BlocProvider(
-          create: (_) => AdminBloc(ApiHandler())..add(FetchKullanicilar()),
-          child: KullanicilarPage(),
+      
+                      SizedBox(height: 16.0),
+      
+                      if (widget.rapor_yetkileri != null &&
+                          widget.rapor_yetkileri!.isNotEmpty) ...[
+                        Text('Rapor Yetkileri',
+                            style: TextStyle(color: Colors.white)),
+                        Column(
+                          children: List.generate(widget.rapor_yetkileri!.length,
+                              (index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: CheckboxListTile(
+                                title: Text(
+                                  widget.rapor_yetkileri![index].raporAdi ??
+                                      "Unknown Rapor",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                value: _raporCheckboxValues[index],
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _raporCheckboxValues[index] = value ?? false;
+                                  });
+                                },
+                                activeColor: Color.fromRGBO(
+                                    241, 108, 39, 1), // Checked color
+                                tileColor: Color.fromRGBO(
+                                    54, 78, 96, 0.2), // Background color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      8.0), // Optional: Rounded corners
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ] else ...[
+                        // Optionally show a message when there are no rapor yetkileri
+                        Text('Henüz Rapor Bulunmamaktadır',
+                            style: TextStyle(color: Colors.white)),
+                      ],
+      
+                      SizedBox(height: 16.0),
+      
+                      SizedBox(height: 16.0),
+                      ElevatedButton(
+                        child: Text('Güncelle',
+                            style: TextStyle(color: Colors.white, fontSize: 16)),
+                        style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(
+                                Color.fromRGBO(241, 108, 39, 1))),
+                        onPressed: () {
+                          if (_validateInputs()) {
+                            DateTime lisansTarihi = DateFormat('dd/MM/yyyy')
+                                .parse(_lisansTarihiController.text);
+                            DateTime lisansBitisTarihi = DateFormat('dd/MM/yyyy')
+                                .parse(_lisansBitisTarihiController.text);
+      
+                            String formattedLisansTarihi =
+                                DateFormat('yyyy-MM-dd').format(lisansTarihi);
+                            String formattedLisansBitisTarihi =
+                                DateFormat('yyyy-MM-dd')
+                                    .format(lisansBitisTarihi);
+      
+                            // Update yetki values based on checkboxes
+                            List<bool> yetkiler = _menuCheckboxValues
+                                .map((checked) => checked ? true : false)
+                                .toList();
+      
+                            // Collect report authority changes
+                            List<RaporYetkiler> updatedRaporYetkileri = widget
+                                .rapor_yetkileri!
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              int index = entry.key;
+                              RaporYetkiler rapor = entry.value;
+                              rapor.yetki = _raporCheckboxValues[index] ? 1 : 0;
+                              rapor.raporAdi =
+                                  widget.rapor_yetkileri![index].raporAdi;
+                              rapor.raporId =
+                                  widget.rapor_yetkileri![index].raporId;
+                              rapor.raporSorgusu =
+                                  widget.rapor_yetkileri![index].raporSorgusu;
+                              return rapor;
+                            }).toList();
+                            // Add update user event with the updated data
+                            context.read<AdminBloc>().add(UpdateKullanici(
+                                  widget.id!,
+                                  _kullaniciAdController.text,
+                                  EncryptionHelper.encryptPassword(
+                                      _sifreController.text),
+                                  formattedLisansTarihi,
+                                  formattedLisansBitisTarihi,
+                                  yetkiler,
+                                  updatedRaporYetkileri,
+                                ));
+                               Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (_) => AdminBloc(ApiHandler())..add(FetchKullanicilar()),
+            child: KullanicilarPage(),
+          ),
         ),
-      ),
-    );
-                        }
-                      },
-                    ),
-                  ],
+      );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
       ),
-    );
+    ));
   }
 
   // Validate inputs

@@ -72,215 +72,221 @@ class _CariHesapDetailPageState extends State<CariHesapDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(34, 54, 69, 20),
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
+    return  MediaQuery(
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.9)), // Force text scale factor to 1.0
+    child: SafeArea(
+      child: Scaffold(
         backgroundColor: Color.fromRGBO(34, 54, 69, 20),
-        title: Text(
-          'Cari Hesap Detayları',
-          style: TextStyle(color: Colors.white),
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Color.fromRGBO(34, 54, 69, 20),
+          title: Text(
+            'Cari Hesap Detayları',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
-      ),
-      body: BlocProvider(
-        create: (context) => CariHesapBloc(ApiHandler())
-          ..add(FetchCariHesapDetails("", "", widget.logicalref)),
-        child: BlocListener<CariHesapBloc, CariHesapState>(
-          listener: (context, state) {
-            if (state is CariHesapDetailesLoaded) {
-              if (_filterOptions.isEmpty) {
-                setState(() {
-                  _filterOptions = state.cariHesapDetails
-                      .map((detail) => detail.trCode ?? 'Unknown')
-                      .toSet()
-                      .toList();
-                  _filterOptions.sort();
-                });
+        body: BlocProvider(
+          create: (context) => CariHesapBloc(ApiHandler())
+            ..add(FetchCariHesapDetails("", "", widget.logicalref)),
+          child: BlocListener<CariHesapBloc, CariHesapState>(
+            listener: (context, state) {
+              if (state is CariHesapDetailesLoaded) {
+                if (_filterOptions.isEmpty) {
+                  setState(() {
+                    _filterOptions = state.cariHesapDetails
+                        .map((detail) => detail.trCode ?? 'Unknown')
+                        .toSet()
+                        .toList();
+                    _filterOptions.sort();
+                  });
+                }
               }
-            }
-          },
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          labelText: 'Ara (İşlem)',
-                          labelStyle: TextStyle(color: Colors.white),
-                          border: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color.fromRGBO(47, 175, 107,
-                                  20), // Border color when focused
-                              width: 2.0, // Border width when focused
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          suffixIcon: Icon(Icons.search),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8.0),
-                    DropdownButton<String>(
-                      dropdownColor: Color.fromRGBO(34, 54, 69, 20),
-                      value: _selectedFilter,
-                      style: TextStyle(color: Colors.white),
-                      onChanged: (newValue) {
-                        setState(() {
-                          _selectedFilter = newValue ?? 'Hepsi';
-                        });
-                      },
-                      items: _filterOptions
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList()
-                        ..insert(
-                            0,
-                            DropdownMenuItem<String>(
-                                value: 'Hepsi', child: Text('Hepsi'))),
-                      hint: Text('Filtre'),
-                    ),
-                    SizedBox(width: 8.0),
-                    IconButton(
-                      icon: Icon(
-                        _isAscending
-                            ? Icons.arrow_upward
-                            : Icons.arrow_downward,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _isAscending = !_isAscending;
-                        });
-                      },
-                    ),
-                    SizedBox(width: 8.0),
-                    IconButton(
-                      icon: Icon(
-                        Icons.calendar_today,
-                        color: Colors.white,
-                      ),
-                      onPressed: () => _selectDateRange(context),
-                    ),
-                  ],
-                ),
-              ),
-              if (_startDate != null && _endDate != null)
+            },
+            child: Column(
+              children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      Text(
-                        'Tarih Aralığı: ${_dateFormat.format(_startDate!)} - ${_dateFormat.format(_endDate!)}',
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            filled: true,
+        fillColor: Color.fromRGBO(56, 74, 82, 1),
+                            labelText: 'Ara (İşlem)',
+                            labelStyle: TextStyle(color: Colors.white),
+                            border: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color.fromRGBO(68, 192, 186, 10),
+                                width: 2.0, // Border width when focused
+                              ),
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                            ),
+                            suffixIcon: Icon(Icons.search),
+                          ),
+                        ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.clear),
-                        onPressed: () {
+                      SizedBox(width: 8.0),
+                      DropdownButton<String>(
+                        dropdownColor: Color.fromRGBO(34, 54, 69, 20),
+                        value: _selectedFilter,
+                        style: TextStyle(color: Colors.white),
+                        onChanged: (newValue) {
                           setState(() {
-                            _startDate = null;
-                            _endDate = null;
+                            _selectedFilter = newValue ?? 'Hepsi';
                           });
                         },
+                        items: _filterOptions
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList()
+                          ..insert(
+                              0,
+                              DropdownMenuItem<String>(
+                                  value: 'Hepsi', child: Text('Hepsi'))),
+                        hint: Text('Filtre'),
+                      ),
+                      SizedBox(width: 8.0),
+                      IconButton(
+                        icon: Icon(
+                          _isAscending
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isAscending = !_isAscending;
+                          });
+                        },
+                      ),
+                      SizedBox(width: 8.0),
+                      IconButton(
+                        icon: Icon(
+                          Icons.calendar_today,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => _selectDateRange(context),
                       ),
                     ],
                   ),
                 ),
-              Expanded(
-                child: BlocBuilder<CariHesapBloc, CariHesapState>(
-                  builder: (context, state) {
-                    if (state is CariHesapLoading) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (state is CariHesapDetailesLoaded) {
-                      final filteredCariHesapDetails = state.cariHesapDetails
-                          .where((detail) =>
-                              detail.trCode
-                                  ?.toLowerCase()
-                                  .contains(_searchQuery) ??
-                              false)
-                          .where((detail) =>
-                              _selectedFilter == 'Hepsi' ||
-                              detail.trCode == _selectedFilter)
-                          .where((detail) {
-                        final detailDate = detail.date != null
-                            ? _dateFormat.parse(detail.date!) // Updated parsing
-                            : null;
-                        if (_startDate != null && _endDate != null) {
-                          return detailDate != null &&
-                              detailDate.isAfter(
-                                  _startDate!.subtract(Duration(days: 1))) &&
-                              detailDate
-                                  .isBefore(_endDate!.add(Duration(days: 1)));
-                        }
-                        return true;
-                      }).toList();
-
-                      filteredCariHesapDetails.sort((a, b) {
-                        final amountA = a.amount ?? 0;
-                        final amountB = b.amount ?? 0;
-
-                        if (_isAscending) {
-                          return amountA.compareTo(amountB);
-                        } else {
-                          return amountB.compareTo(amountA);
-                        }
-                      });
-
-                      return ListView.builder(
-                        padding: EdgeInsets.all(16.0),
-                        itemCount: filteredCariHesapDetails.length,
-                        itemBuilder: (context, index) {
-                          final cariHesap = filteredCariHesapDetails[index];
-                          return ListTile(
-                            title: Text(
-                              '${cariHesap.trCode}',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Tarih: ${cariHesap.date}',
-                                  style: TextStyle(color: Colors.grey[400]),
-                                ),
-                              ],
-                            ),
-                            trailing: Text(
-                              cariHesap.amount.toString(),
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white),
-                            ),
-                            onTap: () async {
-                              if (cariHesap.trCode != "Nakit Tahsilat" &&
-                                  cariHesap.trCode != "Nakit Ödeme") {
-                                _showIslemPopup(context,
-                                    trcode: cariHesap.trCode,
-                                    invoice: cariHesap.invoiceRef,
-                                    tranno: cariHesap.tranNo,
-                                    logicalref: widget.logicalref);
-                              }
-                            },
-                          );
-                        },
-                      );
-                    } else if (state is CariHesapError) {
-                      return Center(child: Text('Error: ${state.message}'));
-                    }
-                    return Container();
-                  },
+                if (_startDate != null && _endDate != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Tarih Aralığı: ${_dateFormat.format(_startDate!)} - ${_dateFormat.format(_endDate!)}',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.clear,color: Colors.white,),
+                          onPressed: () {
+                            setState(() {
+                              _startDate = null;
+                              _endDate = null;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                Expanded(
+                  child: BlocBuilder<CariHesapBloc, CariHesapState>(
+                    builder: (context, state) {
+                      if (state is CariHesapLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is CariHesapDetailesLoaded) {
+                        final filteredCariHesapDetails = state.cariHesapDetails
+                            .where((detail) =>
+                                detail.trCode
+                                    ?.toLowerCase()
+                                    .contains(_searchQuery) ??
+                                false)
+                            .where((detail) =>
+                                _selectedFilter == 'Hepsi' ||
+                                detail.trCode == _selectedFilter)
+                            .where((detail) {
+                          final detailDate = detail.date != null
+                              ? _dateFormat.parse(detail.date!) // Updated parsing
+                              : null;
+                          if (_startDate != null && _endDate != null) {
+                            return detailDate != null &&
+                                detailDate.isAfter(
+                                    _startDate!.subtract(Duration(days: 1))) &&
+                                detailDate
+                                    .isBefore(_endDate!.add(Duration(days: 1)));
+                          }
+                          return true;
+                        }).toList();
+      
+                        filteredCariHesapDetails.sort((a, b) {
+                          final amountA = a.amount ?? 0;
+                          final amountB = b.amount ?? 0;
+      
+                          if (_isAscending) {
+                            return amountA.compareTo(amountB);
+                          } else {
+                            return amountB.compareTo(amountA);
+                          }
+                        });
+      
+                        return ListView.builder(
+                          padding: EdgeInsets.all(16.0),
+                          itemCount: filteredCariHesapDetails.length,
+                          itemBuilder: (context, index) {
+                            final cariHesap = filteredCariHesapDetails[index];
+                            return ListTile(
+                              title: Text(
+                                '${cariHesap.trCode}',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Tarih: ${cariHesap.date}',
+                                    style: TextStyle(color: Colors.grey[400]),
+                                  ),
+                                ],
+                              ),
+                              trailing: Text(
+                                cariHesap.amount.toString(),
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.white),
+                              ),
+                              onTap: () async {
+                                if (cariHesap.trCode != "Nakit Tahsilat" &&
+                                    cariHesap.trCode != "Nakit Ödeme") {
+                                  _showIslemPopup(context,
+                                      trcode: cariHesap.trCode,
+                                      invoice: cariHesap.invoiceRef,
+                                      tranno: cariHesap.tranNo,
+                                      logicalref: widget.logicalref);
+                                }
+                              },
+                            );
+                          },
+                        );
+                      } else if (state is CariHesapError) {
+                        return Center(child: Text('Error: ${state.message}'));
+                      }
+                      return Container();
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    );
+    ));
   }
 
   @override
