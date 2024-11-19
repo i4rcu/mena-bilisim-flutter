@@ -123,7 +123,7 @@ class _RaporlarPageState extends State<RaporlarPage> with RouteAware {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Rapor Başarıyla Silindi.')),
                 );
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => BlocProvider(
