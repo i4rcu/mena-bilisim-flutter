@@ -1,7 +1,12 @@
+import 'dart:io';
+
+import 'package:excel/excel.dart';
 import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/malzemeler_bloc/malzemeler_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 class EnCokSatilanMalzemeListPage extends StatefulWidget {
   @override
   _EnCokSatilanMalzemeListPageState createState() =>
@@ -11,7 +16,7 @@ class _EnCokSatilanMalzemeListPageState extends State<EnCokSatilanMalzemeListPag
   String _searchQuery = '';
   DateTime _selectedDate =DateTime(DateTime.now().year, 1, 1); // Initialize later
   int daysDifference = 0;
-
+ late List<EnCokSatilanMalzeme> filteredCariHesaplar;
   @override
   void initState() {
     super.initState();
@@ -38,6 +43,22 @@ class _EnCokSatilanMalzemeListPageState extends State<EnCokSatilanMalzemeListPag
             'En Çok Satılan Malzemeler',
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
+          actions: [
+            IconButton(
+  icon: Icon(Icons.file_download, color: Colors.white),
+  onPressed: () {
+    final state = context.read<MalzemelerBloc>().state;
+    if (state is EnCokSatilanMalzemeLoaded) {
+      _exportToExcelWithStyles(filteredCariHesaplar);
+      print(filteredCariHesaplar.length);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Veriler yüklenmedi.')),
+      );
+    }
+  },
+),
+          ],
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(130),
             child: Column(
@@ -124,7 +145,6 @@ class _EnCokSatilanMalzemeListPageState extends State<EnCokSatilanMalzemeListPag
             } else if (state is EnCokSatilanMalzemeLoading) {
               return Center(child: CircularProgressIndicator());
             } else if (state is EnCokSatilanMalzemeLoaded) {
-              List<EnCokSatilanMalzeme> filteredCariHesaplar;
       
               if (_searchQuery.isEmpty) {
                 filteredCariHesaplar = state.EnCokSatilanMalzemeler;
@@ -187,4 +207,75 @@ class _EnCokSatilanMalzemeListPageState extends State<EnCokSatilanMalzemeListPag
       ),
     ));
   }
+    void _exportToExcelWithStyles(List<EnCokSatilanMalzeme> faturalar) async {
+  var excel = Excel.createExcel();
+
+  // Rename the default sheet
+  String defaultSheet = excel.getDefaultSheet()!;
+  excel.rename(defaultSheet, 'En Çok Satılan Malzemeler');
+
+  Sheet? sheetObject = excel['En Çok Satılan Malzemeler'];
+
+  // Define a custom style for headers
+  CellStyle headerStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    bold: true,
+    underline: Underline.Double,
+    textWrapping: TextWrapping.WrapText
+  );
+  CellStyle cellStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    underline: Underline.None,
+    textWrapping: TextWrapping.WrapText
+  );
+
+  // Add headers
+   sheetObject.appendRow([
+    TextCellValue( 'Malzeme Adı'),
+    TextCellValue('Tutar (TL)' ),
+  ]);
+
+
+  // Apply styles to the header row (row 0, since indexing starts at 0)
+  for (int col = 0; col < 4; col++) {
+    var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+    cell.cellStyle = headerStyle;
+  }
+
+  // Add data rows
+  for (var fatura in faturalar) {
+    sheetObject.appendRow([
+      TextCellValue( fatura.name!),
+      DoubleCellValue( fatura.tutar!),
+      
+    ]);
+  }
+  for (int col = 0; col < 4; col++) {
+    for(int row = 1 ; row < faturalar.length +1;row++){
+        var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex:row ));
+    cell.cellStyle = cellStyle;
+    }
+    
+  }
+
+  // Save the file
+  var directory = await getTemporaryDirectory();
+  var filePath = '${directory.path}/En_Cok_Satilan_Malzemeler.xlsx';
+
+  File(filePath)
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(excel.encode()!);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Excel dosyası oluşturuldu: $filePath'),
+      action: SnackBarAction(
+        label: 'Aç',
+        onPressed: () {
+          OpenFile.open(filePath);
+        },
+      ),
+    ),
+  );
+}
 }

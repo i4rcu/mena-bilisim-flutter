@@ -1,8 +1,13 @@
+import 'dart:io';
+
+import 'package:excel/excel.dart';
 import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/malzemeler_bloc/malzemeler_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SatilanMalzemePage extends StatefulWidget {
   @override
@@ -18,19 +23,17 @@ class _SatilanMalzemePageState extends State<SatilanMalzemePage> {
   void initState() {
     super.initState();
     _MalzemeBloc = MalzemelerBloc(ApiHandler());
-    _loadData();
-  }
-
-  void _loadData() {
     _MalzemeBloc.add(FetchSatilanMalzeme());
   }
+
+
 
   @override
   void dispose() {
     _MalzemeBloc.close();
     super.dispose();
   }
-
+  late List<HangiMalzemeKimeSatildi> filteredAndSortedCekler;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -43,6 +46,26 @@ class _SatilanMalzemePageState extends State<SatilanMalzemePage> {
             foregroundColor: Colors.white,
             title: Text('Hangi Malzeme Kime Satıldı'),
             backgroundColor: Color.fromRGBO(36, 64, 72, 1),
+            actions: [
+  BlocBuilder<MalzemelerBloc, MalzemelerState>(
+    builder: (context, state) {
+      bool isLoaded = state is Satilanmalzemeloaded;
+
+      return IconButton(
+        icon: Icon(Icons.file_download, color: Colors.white),
+        onPressed: isLoaded
+            ? () {
+                  print(filteredAndSortedCekler.length.toString());
+                  _exportToExcelWithStyles(filteredAndSortedCekler);
+                
+              }
+            : null, // Disable the button
+      );
+    },
+  ),
+],
+
+            
           ),
           backgroundColor: Color.fromRGBO(36, 64, 72, 1),
           body: Padding(
@@ -88,7 +111,7 @@ class _SatilanMalzemePageState extends State<SatilanMalzemePage> {
       if (state is SatilanmlazemeLoading) {
         return Center(child: CircularProgressIndicator());
       } else if (state is Satilanmalzemeloaded) {
-        List<HangiMalzemeKimeSatildi> filteredAndSortedCekler = _sortCekler(_filterCekler(state.SATILANMALZEMELER));
+         filteredAndSortedCekler = _sortCekler(_filterCekler(state.SATILANMALZEMELER));
 
         if (filteredAndSortedCekler.isEmpty) {
           return Center(
@@ -225,4 +248,89 @@ class _SatilanMalzemePageState extends State<SatilanMalzemePage> {
       _isAscending = !_isAscending;
     });
   }
+    void _exportToExcelWithStyles(List<HangiMalzemeKimeSatildi> faturalar) async {
+  var excel = Excel.createExcel();
+
+  // Rename the default sheet
+  String defaultSheet = excel.getDefaultSheet()!;
+  excel.rename(defaultSheet, 'Hangi Malzeme Kime Satıldı');
+
+  Sheet? sheetObject = excel['Hangi Malzeme Kime Satıldı'];
+
+  // Define a custom style for headers
+  CellStyle headerStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    bold: true,
+    underline: Underline.Double,
+    textWrapping: TextWrapping.WrapText
+  );
+  CellStyle cellStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    underline: Underline.None,
+    textWrapping: TextWrapping.WrapText
+  );
+
+  // Add headers
+   sheetObject.appendRow([
+    TextCellValue( 'Malzeme Adı'),
+    TextCellValue( 'Cari Hesap'),
+    TextCellValue('Satış Elemanı' ),
+    TextCellValue('Miktar' ),
+    TextCellValue('Birim Fiyat' ),
+    TextCellValue('Satır Fİyat' ),
+    TextCellValue('KDV' ),
+    TextCellValue('Satır Net Tutar' ),
+
+  ]);
+
+
+  // Apply styles to the header row (row 0, since indexing starts at 0)
+  for (int col = 0; col < 4; col++) {
+    var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+    cell.cellStyle = headerStyle;
+  }
+
+  // Add data rows
+  for (var fatura in faturalar) {
+    sheetObject.appendRow([
+      TextCellValue( fatura.stoKKODU!),
+      TextCellValue( fatura.carIHESAP!),
+      TextCellValue( fatura.satiSELEMANI ?? ""),
+      DoubleCellValue( fatura.miktar!),
+      DoubleCellValue( fatura.bFIYAT!),
+      DoubleCellValue( fatura.satiRTUTARI!),
+      DoubleCellValue( fatura.kdv!),
+      DoubleCellValue( fatura.satiRNETTUTARI!),
+      
+      
+    ]);
+  }
+  for (int col = 0; col < 4; col++) {
+    for(int row = 1 ; row < faturalar.length +1;row++){
+        var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex:row ));
+    cell.cellStyle = cellStyle;
+    }
+    
+  }
+
+  // Save the file
+  var directory = await getTemporaryDirectory();
+  var filePath = '${directory.path}/Hangi_Malzeme_Kime_Satildi.xlsx';
+
+  File(filePath)
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(excel.encode()!);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Excel dosyası oluşturuldu: $filePath'),
+      action: SnackBarAction(
+        label: 'Aç',
+        onPressed: () {
+          OpenFile.open(filePath);
+        },
+      ),
+    ),
+  );
+}
 }

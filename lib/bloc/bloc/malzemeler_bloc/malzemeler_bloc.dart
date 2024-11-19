@@ -38,7 +38,6 @@ class MalzemelerBloc extends Bloc<MalzemelerEvent, MalzemelerState> {
   
 }
 void _onLoadSatilanMalzeme(FetchSatilanMalzeme event, Emitter<MalzemelerState> emit) async {
-  print('FetchHmalzeme event triggered');
   final prefs = await SharedPreferences.getInstance();
   emit(SatilanmlazemeLoading());
   try {
@@ -46,9 +45,8 @@ void _onLoadSatilanMalzeme(FetchSatilanMalzeme event, Emitter<MalzemelerState> e
       prefs.getString('selectedFirma') ?? '',
       prefs.getString('selectedDonem') ?? '',
     );
-    print('Data fetched: $faturalar');  // Log fetched data
     emit(Satilanmalzemeloaded(faturalar));  // Ensure this state is being emitted
-    print('State emitted: Hmalzemeloaded');  // Debugging log
+    print('State emitted: Satilanmalzemeloaded');  // Debugging log
   } catch (e) {
     emit(SatilanmalzemeError(e.toString()));
     print('Error occurred: $e');  // Log error

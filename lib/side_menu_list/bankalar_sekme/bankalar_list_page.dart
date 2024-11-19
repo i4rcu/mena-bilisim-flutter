@@ -1,8 +1,14 @@
+import 'dart:io';
+
+import 'package:excel/excel.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
+import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/bankalar_bloc/bankalar_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BankalarListPage extends StatefulWidget {
   @override
@@ -13,6 +19,18 @@ class _BankalarListPageState extends State<BankalarListPage> {
   String _searchQuery = '';
   final formatter1 =
             NumberFormat('#,##0.00', 'tr_TR'); 
+            late List<Banka> filteredCariHesaplar;
+            
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    BlocProvider.of<BankalarBloc>(context).add(
+      FetchBankalar());
+  }
   @override
   Widget build(BuildContext context) {
     return  MediaQuery(
@@ -27,6 +45,24 @@ class _BankalarListPageState extends State<BankalarListPage> {
             'Bankalar',
             style: TextStyle(color: Colors.white),
           ),
+          actions: [
+            BlocBuilder<BankalarBloc, BankalarState>(
+    builder: (context, state) {
+      bool isLoaded = state is BankalarLoaded;
+
+      return IconButton(
+        icon: Icon(Icons.file_download, color: Colors.white),
+        onPressed: isLoaded
+            ? () {
+                  print(filteredCariHesaplar.length.toString());
+                  _exportToExcelWithStyles(filteredCariHesaplar);
+                
+              }
+            : (){print("ssssssssssssssssssssssssssssssssssssssssssssssssssssss");}, // Disable the button
+      );
+    },
+  ),
+          ],
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(70),
             child: Padding(
@@ -73,7 +109,7 @@ class _BankalarListPageState extends State<BankalarListPage> {
               } else if (state is BankalarLoading) {
                 return Center(child: CircularProgressIndicator());
               } else if (state is BankalarLoaded) {
-                final filteredCariHesaplar = state.Bankalar.where((cariHesap) {
+                 filteredCariHesaplar = state.Bankalar.where((cariHesap) {
                   return cariHesap.hesap!.toLowerCase().contains(_searchQuery) ||
                       cariHesap.banka!.toLowerCase().contains(_searchQuery);
                 }).toList();
@@ -136,4 +172,78 @@ class _BankalarListPageState extends State<BankalarListPage> {
       ),
     ));
   }
+    void _exportToExcelWithStyles(List<Banka> faturalar) async {
+  var excel = Excel.createExcel();
+
+  // Rename the default sheet
+  String defaultSheet = excel.getDefaultSheet()!;
+  excel.rename(defaultSheet, 'Bankalar');
+
+  Sheet? sheetObject = excel['Bankalar'];
+
+  // Define a custom style for headers
+  CellStyle headerStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    bold: true,
+    underline: Underline.Double,
+    textWrapping: TextWrapping.WrapText
+  );
+  CellStyle cellStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    underline: Underline.None,
+    textWrapping: TextWrapping.WrapText
+  );
+
+  // Add headers
+   sheetObject.appendRow([
+    TextCellValue( 'Banka Adı'),
+    TextCellValue( 'Şubesi'),
+    TextCellValue('Bakiye (TL)' ),
+  ]);
+
+
+  // Apply styles to the header row (row 0, since indexing starts at 0)
+  for (int col = 0; col < 4; col++) {
+    var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+    cell.cellStyle = headerStyle;
+  }
+
+  // Add data rows
+  for (var fatura in faturalar) {
+    sheetObject.appendRow([
+      TextCellValue( fatura.banka!),
+      TextCellValue( fatura.hesap!),
+      TextCellValue( fatura.banka!.toString()),
+      
+      
+    ]);
+  }
+  for (int col = 0; col < 4; col++) {
+    for(int row = 1 ; row < faturalar.length +1;row++){
+        var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex:row ));
+    cell.cellStyle = cellStyle;
+    }
+    
+  }
+
+  // Save the file
+  var directory = await getTemporaryDirectory();
+  var filePath = '${directory.path}/Bankalar.xlsx';
+
+  File(filePath)
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(excel.encode()!);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Excel dosyası oluşturuldu: $filePath'),
+      action: SnackBarAction(
+        label: 'Aç',
+        onPressed: () {
+          OpenFile.open(filePath);
+        },
+      ),
+    ),
+  );
+}
 }

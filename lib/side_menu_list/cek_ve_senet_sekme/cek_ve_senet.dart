@@ -1,9 +1,14 @@
+import 'dart:io';
+
+import 'package:excel/excel.dart';
 import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/bloc/bloc/cekvesenet_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CekVeSenetPage extends StatefulWidget {
   @override
@@ -16,7 +21,7 @@ class _CekVeSenetPageState extends State<CekVeSenetPage> {
   String _searchQuery = '';
   DateTime? _startDate;
   DateTime? _endDate;
-
+  late List<Cek> filteredCekler;
   final List<String> _dropdownItems = [
     'Portföydeki Çekler',
     'Portföydeki Senetler',
@@ -66,7 +71,26 @@ class _CekVeSenetPageState extends State<CekVeSenetPage> {
             foregroundColor: Colors.white,
             title: Text('Çek ve Senetler'),
             backgroundColor: Color.fromRGBO(36, 64, 72, 1),
+            actions: [
+             BlocBuilder<CekvesenetBloc, CekvesenetState>(
+    builder: (context, state) {
+      bool isLoaded = state is CekVeSenetLoadaed;
+
+      return IconButton(
+        icon: Icon(Icons.file_download, color: Colors.white),
+        onPressed: isLoaded
+            ? () {
+                  print(filteredCekler.length.toString());
+                  _exportToExcelWithStyles(filteredCekler);
+                
+              }
+            : null, // Disable the button
+      );
+    },
+  ),
+            ],
           ),
+          
           backgroundColor: Color.fromRGBO(36, 64, 72, 1),
           body: Padding(
             padding: const EdgeInsets.all(18.0),
@@ -206,7 +230,7 @@ class _CekVeSenetPageState extends State<CekVeSenetPage> {
         if (state is CekVeSenetLoading) {
           return Center(child: CircularProgressIndicator());
         } else if (state is CekVeSenetLoadaed) {
-          List<Cek> filteredCekler = _filterCekler(state.Cekler);
+           filteredCekler = _filterCekler(state.Cekler);
 
           if (filteredCekler.isEmpty) {
             return Center(
@@ -334,4 +358,85 @@ class _CekVeSenetPageState extends State<CekVeSenetPage> {
       return matchBorclu && matchDate;
     }).toList();
   }
+    void _exportToExcelWithStyles(List<Cek> faturalar) async {
+  var excel = Excel.createExcel();
+
+  // Rename the default sheet
+  String defaultSheet = excel.getDefaultSheet()!;
+  excel.rename(defaultSheet, 'Çek Ve Senetler');
+
+  Sheet? sheetObject = excel['Çek Ve Senetler'];
+
+  // Define a custom style for headers
+  CellStyle headerStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    bold: true,
+    underline: Underline.Double,
+    textWrapping: TextWrapping.WrapText
+  );
+  CellStyle cellStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    underline: Underline.None,
+    textWrapping: TextWrapping.WrapText
+  );
+
+  // Add headers
+   sheetObject.appendRow([
+    TextCellValue( 'İşlem Türü'),
+    TextCellValue('Tarih' ),
+    TextCellValue('Durumu' ),
+    TextCellValue('Borçlu' ),
+    TextCellValue('Banka Adı' ),
+    TextCellValue('Vade' ),
+    TextCellValue('Tutar (TL)' ),
+  ]);
+
+
+  // Apply styles to the header row (row 0, since indexing starts at 0)
+  for (int col = 0; col < 4; col++) {
+    var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+    cell.cellStyle = headerStyle;
+  }
+
+  // Add data rows
+  for (var fatura in faturalar) {
+    sheetObject.appendRow([
+      TextCellValue( fatura.islemtur!),
+      TextCellValue( fatura.date!),
+      TextCellValue( fatura.durumu!),
+      TextCellValue( fatura.borclu!),
+      TextCellValue( fatura.bankname!),
+      TextCellValue( fatura.vade!),
+      IntCellValue( fatura.amount!),
+
+    ]);
+  }
+  for (int col = 0; col < 4; col++) {
+    for(int row = 1 ; row < faturalar.length +1;row++){
+        var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex:row ));
+    cell.cellStyle = cellStyle;
+    }
+    
+  }
+
+  // Save the file
+  var directory = await getTemporaryDirectory();
+  var filePath = '${directory.path}/CekVeSenetler.xlsx';
+
+  File(filePath)
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(excel.encode()!);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Excel dosyası oluşturuldu: $filePath'),
+      action: SnackBarAction(
+        label: 'Aç',
+        onPressed: () {
+          OpenFile.open(filePath);
+        },
+      ),
+    ),
+  );
+}
 }

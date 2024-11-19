@@ -9,9 +9,9 @@ import 'package:fitness_dashboard_ui/bloc/bloc/malzemeler_bloc/malzemeler_bloc.d
 import 'package:fitness_dashboard_ui/data/admin_side_bar_data.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/cariler_sekme/cari_hesap_list_page.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/cariler_sekme/en_cok_satilan_cariler.dart';
-import 'package:fitness_dashboard_ui/side_menu_list/faturalar_sekmeler/alinan_fatualar.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/bankalar_sekme/bankalar_list_page.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/cek_ve_senet_sekme/cek_ve_senet.dart';
+import 'package:fitness_dashboard_ui/side_menu_list/faturalar_sekmeler/alinan_fatualar.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/faturalar_sekmeler/faturla.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/malzemeler_sekme/en_cok_satilan_malzeme.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/malzemeler_sekme/gunluk_malzeme_alisi.dart';

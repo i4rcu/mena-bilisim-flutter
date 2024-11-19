@@ -1,8 +1,13 @@
+import 'dart:io';
+
+import 'package:excel/excel.dart';
 import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/cari_hesaplar_bloc/cari_hesap_bloc.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/cariler_sekme/cari_hesap_detail_page.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class EnCokSatilanCariHesapListPage extends StatefulWidget {
   @override
@@ -46,6 +51,21 @@ class _EnCokSatilanCariHesapListPageState
               'En Çok Satış Yapılan Cari Hesaplar Tutar Bazlı',
               style: TextStyle(color: Colors.white, fontSize: 20),
             ),
+            actions: [
+              IconButton(
+  icon: Icon(Icons.file_download, color: Colors.white),
+  onPressed: () {
+    final state = context.read<CariHesapBloc>().state;
+    if (state is EnCokSatilanCarilerLoaded) {
+      _exportToExcelWithStyles(state.enCokSatilanCariler);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Veriler yüklenmedi.')),
+      );
+    }
+  },
+),
+            ],
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(130),
               child: Column(
@@ -212,4 +232,75 @@ class _EnCokSatilanCariHesapListPageState
     ),
     );
   }
+    void _exportToExcelWithStyles(List<EnCokSatilanCariler> faturalar) async {
+  var excel = Excel.createExcel();
+
+  // Rename the default sheet
+  String defaultSheet = excel.getDefaultSheet()!;
+  excel.rename(defaultSheet, 'En Çok Satılan Cari Hesaplar');
+
+  Sheet? sheetObject = excel['En Çok Satılan Cari Hesaplar'];
+
+  // Define a custom style for headers
+  CellStyle headerStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    bold: true,
+    underline: Underline.Double,
+    textWrapping: TextWrapping.WrapText
+  );
+  CellStyle cellStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    underline: Underline.None,
+    textWrapping: TextWrapping.WrapText
+  );
+
+  // Add headers
+   sheetObject.appendRow([
+    TextCellValue( 'Cari Hesap'),
+    TextCellValue('Bakiye (TL)' ),
+  ]);
+
+
+  // Apply styles to the header row (row 0, since indexing starts at 0)
+  for (int col = 0; col < 4; col++) {
+    var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+    cell.cellStyle = headerStyle;
+  }
+
+  // Add data rows
+  for (var fatura in faturalar) {
+    sheetObject.appendRow([
+      TextCellValue( fatura.name!),
+      DoubleCellValue( fatura.tutar!),
+      
+    ]);
+  }
+  for (int col = 0; col < 4; col++) {
+    for(int row = 1 ; row < faturalar.length +1;row++){
+        var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex:row ));
+    cell.cellStyle = cellStyle;
+    }
+    
+  }
+
+  // Save the file
+  var directory = await getTemporaryDirectory();
+  var filePath = '${directory.path}/En_Cok_Satilan_Cariler.xlsx';
+
+  File(filePath)
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(excel.encode()!);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Excel dosyası oluşturuldu: $filePath'),
+      action: SnackBarAction(
+        label: 'Aç',
+        onPressed: () {
+          OpenFile.open(filePath);
+        },
+      ),
+    ),
+  );
+}
 }

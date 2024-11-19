@@ -1,8 +1,14 @@
+import 'dart:io';
+
+import 'package:excel/excel.dart';
+import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/malzemeler_bloc/malzemeler_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class TumMalzemelerPage extends StatefulWidget {
   @override
@@ -39,6 +45,22 @@ class _TumMalzemelerPageState extends State<TumMalzemelerPage> {
               icon: Icon(Icons.refresh, color: Colors.white),
               onPressed: _resetFilters,
             ),
+             BlocBuilder<MalzemelerBloc, MalzemelerState>(
+    builder: (context, state) {
+      bool isLoaded = state is TumMalzemeloaded;
+
+      return IconButton(
+        icon: Icon(Icons.file_download, color: Colors.white),
+        onPressed: isLoaded
+            ? () {
+                  print(state.TUMMALZEMELERR.length.toString());
+                  _exportToExcelWithStyles(state.TUMMALZEMELERR);
+                
+              }
+            : null, // Disable the button
+      );
+    },
+  ),
           ],
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(65),
@@ -163,4 +185,79 @@ class _TumMalzemelerPageState extends State<TumMalzemelerPage> {
       ),
     ));
   }
+    void _exportToExcelWithStyles(List<TumMalzemeler> faturalar) async {
+  var excel = Excel.createExcel();
+
+  // Rename the default sheet
+  String defaultSheet = excel.getDefaultSheet()!;
+  excel.rename(defaultSheet, 'Tüm Malzemeler');
+
+  Sheet? sheetObject = excel['Tüm Malzemeler'];
+
+  // Define a custom style for headers
+  CellStyle headerStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    bold: true,
+    underline: Underline.Double,
+    textWrapping: TextWrapping.WrapText
+  );
+  CellStyle cellStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    underline: Underline.None,
+    textWrapping: TextWrapping.WrapText
+  );
+
+  // Add headers
+   sheetObject.appendRow([
+    TextCellValue( 'Malzeme Adı'),
+    TextCellValue( 'Malzeme Kodu'),
+    TextCellValue('Stokta Kalan' ),
+    
+  ]);
+
+
+  // Apply styles to the header row (row 0, since indexing starts at 0)
+  for (int col = 0; col < 4; col++) {
+    var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+    cell.cellStyle = headerStyle;
+  }
+
+  // Add data rows
+  for (var fatura in faturalar) {
+    sheetObject.appendRow([
+      TextCellValue( fatura.name!),
+      TextCellValue( fatura.code!),
+      IntCellValue( fatura.elde!),
+      
+      
+    ]);
+  }
+  for (int col = 0; col < 4; col++) {
+    for(int row = 1 ; row < faturalar.length +1;row++){
+        var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex:row ));
+    cell.cellStyle = cellStyle;
+    }
+    
+  }
+
+  // Save the file
+  var directory = await getTemporaryDirectory();
+  var filePath = '${directory.path}/Tum_Malzemeler.xlsx';
+
+  File(filePath)
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(excel.encode()!);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Excel dosyası oluşturuldu: $filePath'),
+      action: SnackBarAction(
+        label: 'Aç',
+        onPressed: () {
+          OpenFile.open(filePath);
+        },
+      ),
+    ),
+  );
+}
 }

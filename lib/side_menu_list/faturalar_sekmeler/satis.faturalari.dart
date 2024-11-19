@@ -1,9 +1,15 @@
+import 'dart:io';
+
+import 'package:excel/excel.dart';
+import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/alinan_faturala_bloc/alinan_faturalar_bloc.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/faturalar_sekmeler/fatura_detay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SatisFaturalarPage extends StatefulWidget {
   @override
@@ -19,7 +25,7 @@ class _SatisFaturalarPageState extends State<SatisFaturalarPage> {
   final formatter1 = NumberFormat('#,##0.00', 'tr_TR');
   final DateFormat _displayDateFormat = DateFormat('dd.MM.yyyy');
   final DateFormat _apiDateFormat = DateFormat('yyyy.MM.dd');
-
+   late List<AlinanFatura> filteredSatisFaturalar;
   void _resetFilters() {
     setState(() {
       _searchQuery = '';
@@ -31,6 +37,11 @@ class _SatisFaturalarPageState extends State<SatisFaturalarPage> {
     BlocProvider.of<AlinanFaturalarBloc>(context).add(
       LoadSatisFaturalar(prefix: 'yourTablePrefix', suffix: 'yourTableSuffix'),
     );
+  }
+  @override
+  void initState() {
+    super.initState();
+    _resetFilters();
   }
 
   @override
@@ -81,6 +92,21 @@ class _SatisFaturalarPageState extends State<SatisFaturalarPage> {
                 icon: Icon(Icons.refresh, color: Colors.white),
                 onPressed: _resetFilters,
               ),
+               IconButton(
+  icon: Icon(Icons.file_download, color: Colors.white),
+  onPressed: () {
+    _resetFilters();
+    final state = context.read<AlinanFaturalarBloc>().state;
+    if (state is SatisFaturalarLoadSuccess) {
+      print(filteredSatisFaturalar.length);
+      _exportToExcelWithStyles(filteredSatisFaturalar);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Veriler yüklenmedi.')),
+      );
+    }
+  },
+),
             ],
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(130),
@@ -232,7 +258,7 @@ class _SatisFaturalarPageState extends State<SatisFaturalarPage> {
                 } else if (state is SatisFaturaLoading) {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is SatisFaturalarLoadSuccess) {
-                  final filteredSatisFaturalar = state.Faturalar.where((fatura) {
+                   filteredSatisFaturalar = state.Faturalar.where((fatura) {
                     final definition = fatura.definition?.toLowerCase() ?? '';
                     final trCode = fatura.trCode?.toLowerCase() ?? '';
         
@@ -368,4 +394,79 @@ class _SatisFaturalarPageState extends State<SatisFaturalarPage> {
       ),
     );
   }
+  void _exportToExcelWithStyles(List<AlinanFatura> faturalar) async {
+  var excel = Excel.createExcel();
+
+  // Rename the default sheet
+  String defaultSheet = excel.getDefaultSheet()!;
+  excel.rename(defaultSheet, 'Satış Faturalar');
+
+  Sheet? sheetObject = excel['Satış Faturalar'];
+
+  // Define a custom style for headers
+  CellStyle headerStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    bold: true,
+    underline: Underline.Double,
+    textWrapping: TextWrapping.WrapText
+  );
+  CellStyle cellStyle = CellStyle(
+    fontFamily: getFontFamily(FontFamily.Calibri),
+    underline: Underline.None,
+    textWrapping: TextWrapping.WrapText
+  );
+
+  // Add headers
+   sheetObject.appendRow([
+    TextCellValue( 'Cari Hesap'),
+    TextCellValue( 'İşlem Türü'),
+    TextCellValue('Tarih' ),
+    TextCellValue('Tutar (TL)' ),
+  ]);
+
+
+  // Apply styles to the header row (row 0, since indexing starts at 0)
+  for (int col = 0; col < 4; col++) {
+    var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+    cell.cellStyle = headerStyle;
+  }
+
+  // Add data rows
+  for (var fatura in faturalar) {
+    sheetObject.appendRow([
+      TextCellValue( fatura.definition!),
+      TextCellValue( fatura.trCode!),
+      TextCellValue( fatura.date!),
+      DoubleCellValue( fatura.netTotal!),
+      
+    ]);
+  }
+  for (int col = 0; col < 4; col++) {
+    for(int row = 1 ; row < faturalar.length +1;row++){
+        var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex:row ));
+    cell.cellStyle = cellStyle;
+    }
+    
+  }
+
+  // Save the file
+  var directory = await getTemporaryDirectory();
+  var filePath = '${directory.path}/satis_faturalar.xlsx';
+
+  File(filePath)
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(excel.encode()!);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Excel dosyası oluşturuldu: $filePath'),
+      action: SnackBarAction(
+        label: 'Aç',
+        onPressed: () {
+          OpenFile.open(filePath);
+        },
+      ),
+    ),
+  );
+}
 }

@@ -28,8 +28,10 @@ dependencies:
   window_manager: ^0.4.2
   auto_route_generator: ^9.0.0
   flutter_launcher_icons: ^0.14.1
+  path_provider: ^2.1.5
+  excel: ^4.0.6
+  open_file: ^3.5.10
 dev_dependencies:
-  flutter_launcher_icons: ^0.14.1
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
