@@ -128,7 +128,7 @@ class CariHeasplarKart extends StatelessWidget {
                   itemCount: cariHesaplar.length,
                   itemBuilder: (context, index) {
                     final hesap = cariHesaplar[index];
-                    final bakiye = hesap.bakiye ?? 0.0;
+                    final bakiye = hesap.bakiye;
                     final bakiyeTextColor = bakiye >= 0
                         ? Colors.green.shade400
                         : Color.fromARGB(255, 255, 20, 3);

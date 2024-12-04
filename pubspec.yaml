@@ -31,6 +31,9 @@ dependencies:
   path_provider: ^2.1.5
   excel: ^4.0.6
   open_file: ^3.5.10
+  pdf: ^3.11.1
+  share_plus: ^10.1.2
+  printing: ^5.13.4
 dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
@@ -41,6 +44,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/fonts/
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: "AppIcon"

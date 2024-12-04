@@ -242,7 +242,6 @@ class ApiHandler {
 
   if (response.statusCode == 200) {
     List jsonResponse = json.decode(response.body);
-    print(jsonResponse);
     return jsonResponse.map((data) => CariHesap.fromJson(data)).toList();
   } else {
     throw Exception('Failed to load cari hesaplar');

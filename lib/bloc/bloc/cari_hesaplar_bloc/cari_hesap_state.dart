@@ -59,8 +59,9 @@ class CariHesapLoaded extends CariHesapState {
 
 class CariHesapDetailesLoaded extends CariHesapState {
   final List<CariHesapDetail> cariHesapDetails;
+    final List<CariHesap> cariHesaplar;
 
-  CariHesapDetailesLoaded(this.cariHesapDetails);
+  CariHesapDetailesLoaded(this.cariHesapDetails,this.cariHesaplar);
 }
 
 class CariHesapError extends CariHesapState {

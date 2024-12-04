@@ -369,14 +369,14 @@ class _CariHesapDetailPageState extends State<CariHesapDetailPage> {
   File(filePath)
     ..createSync(recursive: true)
     ..writeAsBytesSync(excel.encode()!);
-
+   OpenFile.open(filePath);
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text('Excel dosyası oluşturuldu: $filePath'),
       action: SnackBarAction(
         label: 'Aç',
         onPressed: () {
-          OpenFile.open(filePath);
+         
         },
       ),
     ),
@@ -436,14 +436,14 @@ void _showIslemPopup(
                       return Center(child: Text("No data available"));
                     }
                     return SizedBox(
-                      height: 300.0, // Set a specific height for the ListView
+                      height: 300.0, 
                       child: ListView.builder(
                         shrinkWrap:
-                            true, // Ensures the ListView only takes the space it needs
+                            true, 
                         itemCount: state.virmanFisiDetails.length,
                         itemBuilder: (context, index) {
                           var item = state.virmanFisiDetails[index];
-                          return ListTile(
+                          return ListTile(2
                             title: Text(
                               item.name!,
                               style: TextStyle(
