@@ -83,7 +83,6 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   }
    void _onUpdateKullanici(UpdateKullanici event, Emitter<AdminState> emit) async {
   emit(KullaniciUpdating()); // Indicate that updating has started
-      final prefs = await SharedPreferences.getInstance();
 
   try {
       bool isUpdated = await apiHandler.UpdateUser(

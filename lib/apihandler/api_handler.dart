@@ -977,7 +977,7 @@ void AddUser( String username, String password, String lisansTarihi, String lisa
   'sifre': password,
   'lisansTarihi': lisansTarihi,
   'lisansBitisTarihi': lisansBitisTarihi,
-  'permissions': menuler // If backend expects integers
+  'permissions': menuler 
 }),
 
     );

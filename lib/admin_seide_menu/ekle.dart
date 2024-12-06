@@ -1,3 +1,4 @@
+import 'package:fitness_dashboard_ui/EncryptionHelper.dart';
 import 'package:fitness_dashboard_ui/admin_seide_menu/kullanicilar_sekme/kullanicilar.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/admin_bloc/bloc/admin_bloc.dart';
@@ -222,21 +223,27 @@ class _KullaniciEkleState extends State<KullaniciEkle> {
             // Parse and convert dates to yyyy-MM-dd format
             DateTime lisansTarihi = DateFormat('dd/MM/yyyy').parse(_lisansTarihiController.text);
             DateTime lisansBitisTarihi = DateFormat('dd/MM/yyyy').parse(_lisansBitisTarihiController.text);
-        
+            print(lisansTarihi);
+            print(lisansBitisTarihi);
             // Format the dates to yyyy-MM-dd
             String formattedLisansTarihi = DateFormat('yyyy-MM-dd').format(lisansTarihi);
             String formattedLisansBitisTarihi = DateFormat('yyyy-MM-dd').format(lisansBitisTarihi);
-        
+            print(formattedLisansTarihi);
+            print(formattedLisansBitisTarihi);
+          print(DateEncryptor().encrypt(lisansTarihi));
+          print(DateEncryptor().encrypt(lisansBitisTarihi));
             // Trigger AddKullanici event with formatted dates using existing Bloc
             context.read<AdminBloc>().add(
         AddKullanici(
           _kullaniciAdController.text,
           EncryptionHelper.encryptPassword(_sifreController.text),
-          formattedLisansTarihi,  // Passing formatted lisansTarihi
-          formattedLisansBitisTarihi,  // Passing formatted lisansBitisTarihi
+          DateEncryptor().encrypt((lisansTarihi)),  // Passing formatted lisansTarihi
+          DateEncryptor().encrypt(lisansBitisTarihi),  // Passing formatted lisansBitisTarihi
           _checkboxValues,  // Checkbox values
         ),
             );
+
+
           }
             ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Kullanıcı Bilgileri Başarıyla Eklendi.')),);

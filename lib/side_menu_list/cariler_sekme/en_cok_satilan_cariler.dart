@@ -40,9 +40,11 @@ class _EnCokSatilanCariHesapListPageState
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.87)), // Force text scale factor to 1.0
-    child: SafeArea(
-      child: Scaffold(
+      data: MediaQuery.of(context).copyWith(
+          textScaler:
+              TextScaler.linear(0.87)), // Force text scale factor to 1.0
+      child: SafeArea(
+        child: Scaffold(
           backgroundColor: Color.fromRGBO(35, 55, 69, 10),
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.white),
@@ -53,18 +55,18 @@ class _EnCokSatilanCariHesapListPageState
             ),
             actions: [
               IconButton(
-  icon: Icon(Icons.file_download, color: Colors.white),
-  onPressed: () {
-    final state = context.read<CariHesapBloc>().state;
-    if (state is EnCokSatilanCarilerLoaded) {
-      _exportToExcelWithStyles(state.enCokSatilanCariler);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Veriler yüklenmedi.')),
-      );
-    }
-  },
-),
+                icon: Icon(Icons.file_download, color: Colors.white),
+                onPressed: () {
+                  final state = context.read<CariHesapBloc>().state;
+                  if (state is EnCokSatilanCarilerLoaded) {
+                    _exportToExcelWithStyles(state.enCokSatilanCariler);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Veriler yüklenmedi.')),
+                    );
+                  }
+                },
+              ),
             ],
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(130),
@@ -77,17 +79,18 @@ class _EnCokSatilanCariHesapListPageState
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         filled: true,
-        fillColor: Color.fromRGBO(56, 74, 82, 1),
+                        fillColor: Color.fromRGBO(56, 74, 82, 1),
                         labelText: 'Ara',
                         labelStyle: TextStyle(color: Colors.white),
                         border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color.fromRGBO(68, 192, 186, 10)),
+                          borderSide: BorderSide(
+                              color: Color.fromRGBO(68, 192, 186, 10)),
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Color.fromRGBO(68, 192, 186, 10), width: 2.0),
+                              color: Color.fromRGBO(68, 192, 186, 10),
+                              width: 2.0),
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
                         suffixIcon: Icon(Icons.search, color: Colors.white),
@@ -118,7 +121,8 @@ class _EnCokSatilanCariHesapListPageState
                               lastDate: DateTime.now(),
                               helpText: 'Tarih Seç',
                             );
-                            if (pickedDate != null && pickedDate != _selectedDate) {
+                            if (pickedDate != null &&
+                                pickedDate != _selectedDate) {
                               setState(() {
                                 _selectedDate = pickedDate;
                                 daysDifference = DateTime.now()
@@ -157,7 +161,7 @@ class _EnCokSatilanCariHesapListPageState
                 return Center(child: CircularProgressIndicator());
               } else if (state is EnCokSatilanCarilerLoaded) {
                 List<EnCokSatilanCariler> filteredCariHesaplar;
-        
+
                 if (_searchQuery.isEmpty) {
                   filteredCariHesaplar = state.enCokSatilanCariler;
                 } else {
@@ -166,7 +170,7 @@ class _EnCokSatilanCariHesapListPageState
                     return cariHesap.name!.toLowerCase().contains(_searchQuery);
                   }).toList();
                 }
-        
+
                 return ListView.builder(
                   itemCount: filteredCariHesaplar.length,
                   itemBuilder: (context, index) {
@@ -229,78 +233,71 @@ class _EnCokSatilanCariHesapListPageState
             },
           ),
         ),
-    ),
+      ),
     );
   }
-    void _exportToExcelWithStyles(List<EnCokSatilanCariler> faturalar) async {
-  var excel = Excel.createExcel();
 
-  // Rename the default sheet
-  String defaultSheet = excel.getDefaultSheet()!;
-  excel.rename(defaultSheet, 'En Çok Satılan Cari Hesaplar');
+  void _exportToExcelWithStyles(List<EnCokSatilanCariler> faturalar) async {
+    var excel = Excel.createExcel();
 
-  Sheet? sheetObject = excel['En Çok Satılan Cari Hesaplar'];
+    // Rename the default sheet
+    String defaultSheet = excel.getDefaultSheet()!;
+    excel.rename(defaultSheet, 'En Çok Satılan Cari Hesaplar');
 
-  // Define a custom style for headers
-  CellStyle headerStyle = CellStyle(
-    fontFamily: getFontFamily(FontFamily.Calibri),
-    bold: true,
-    underline: Underline.Double,
-    textWrapping: TextWrapping.WrapText
-  );
-  CellStyle cellStyle = CellStyle(
-    fontFamily: getFontFamily(FontFamily.Calibri),
-    underline: Underline.None,
-    textWrapping: TextWrapping.WrapText
-  );
+    Sheet? sheetObject = excel['En Çok Satılan Cari Hesaplar'];
 
-  // Add headers
-   sheetObject.appendRow([
-    TextCellValue( 'Cari Hesap'),
-    TextCellValue('Bakiye (TL)' ),
-  ]);
+    // Define a custom style for headers
+    CellStyle headerStyle = CellStyle(
+        fontFamily: getFontFamily(FontFamily.Calibri),
+        bold: true,
+        underline: Underline.Double,
+        textWrapping: TextWrapping.WrapText);
+    CellStyle cellStyle = CellStyle(
+        fontFamily: getFontFamily(FontFamily.Calibri),
+        underline: Underline.None,
+        textWrapping: TextWrapping.WrapText);
 
-
-  // Apply styles to the header row (row 0, since indexing starts at 0)
-  for (int col = 0; col < 4; col++) {
-    var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
-    cell.cellStyle = headerStyle;
-  }
-
-  // Add data rows
-  for (var fatura in faturalar) {
     sheetObject.appendRow([
-      TextCellValue( fatura.name!),
-      DoubleCellValue( fatura.tutar!),
-      
+      TextCellValue('Cari Hesap'),
+      TextCellValue('Bakiye (TL)'),
     ]);
-  }
-  for (int col = 0; col < 4; col++) {
-    for(int row = 1 ; row < faturalar.length +1;row++){
-        var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex:row ));
-    cell.cellStyle = cellStyle;
+
+    for (int col = 0; col < 4; col++) {
+      var cell = sheetObject
+          .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+      cell.cellStyle = headerStyle;
     }
-    
-  }
+    for (var fatura in faturalar) {
+      sheetObject.appendRow([
+        TextCellValue(fatura.name!),
+        DoubleCellValue(fatura.tutar!),
+      ]);
+    }
+    for (int col = 0; col < 4; col++) {
+      for (int row = 1; row < faturalar.length + 1; row++) {
+        var cell = sheetObject
+            .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row));
+        cell.cellStyle = cellStyle;
+      }
+    }
 
-  // Save the file
-  var directory = await getTemporaryDirectory();
-  var filePath = '${directory.path}/En_Cok_Satilan_Cariler.xlsx';
+    var directory = await getTemporaryDirectory();
+    var filePath = '${directory.path}/En_Cok_Satilan_Cariler.xlsx';
 
-  File(filePath)
-    ..createSync(recursive: true)
-    ..writeAsBytesSync(excel.encode()!);
+    File(filePath)
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(excel.encode()!);
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Excel dosyası oluşturuldu: $filePath'),
-      action: SnackBarAction(
-        label: 'Aç',
-        onPressed: () {
-          OpenFile.open(filePath);
-        },
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Excel dosyası oluşturuldu: $filePath'),
+        action: SnackBarAction(
+          label: 'Aç',
+          onPressed: () {
+            OpenFile.open(filePath);
+          },
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

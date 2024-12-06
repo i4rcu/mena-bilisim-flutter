@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:excel/excel.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:fitness_dashboard_ui/apihandler/model.dart';
@@ -331,13 +330,11 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
   void _exportToExcelWithStyles(List<CariHesap> faturalar) async {
     var excel = Excel.createExcel();
 
-    // Rename the default sheet
     String defaultSheet = excel.getDefaultSheet()!;
     excel.rename(defaultSheet, 'Cari Hesaplar');
 
     Sheet? sheetObject = excel['Cari Hesaplar'];
 
-    // Define a custom style for headers
     CellStyle headerStyle = CellStyle(
         fontFamily: getFontFamily(FontFamily.Calibri),
         bold: true,
@@ -348,14 +345,12 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
         underline: Underline.None,
         textWrapping: TextWrapping.WrapText);
 
-    // Add headers
     sheetObject.appendRow([
       TextCellValue('Cari Hesap'),
       TextCellValue('Kodu'),
       TextCellValue('Bakiyesi (TL)'),
     ]);
 
-    // Apply styles to the header row (row 0, since indexing starts at 0)
     for (int col = 0; col < 4; col++) {
       var cell = sheetObject
           .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
@@ -392,16 +387,13 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
   void _generateAndSharePdf(CariHesap cariHesap, List<CariHesapDetail> details) async {
   final pdf = pw.Document();
 
-  // Load custom font
   final fontData = await rootBundle.load('assets/fonts/NotoSans-VariableFont_wdth,wght.ttf');
   final ttf = pw.Font.ttf(fontData);
 
-  // Define custom colors
   final headerColor = PdfColor.fromHex('#4CAF50');
   final alternateRowColor = PdfColors.grey300;
   final textColor = PdfColor.fromHex('#212121');
 
-  // Add content to the PDF
   pdf.addPage(
     pw.Page(
       pageFormat: PdfPageFormat.a4,
@@ -409,7 +401,6 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
         return pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Title
             pw.Text('Cari Hesap Ekstresi',
                 style: pw.TextStyle(
                     fontSize: 24,
@@ -418,7 +409,6 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
                     font: ttf)),
             pw.SizedBox(height: 16),
 
-            // Info Section
             pw.Container(
               decoration: pw.BoxDecoration(
                 border: pw.Border.all(color: headerColor, width: 2),
@@ -439,17 +429,14 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
             ),
             pw.SizedBox(height: 16),
 
-            // Details Table Title
             pw.Text('Detayları:',
                 style: pw.TextStyle(
                     fontSize: 18, fontWeight: pw.FontWeight.bold, color: headerColor, font: ttf)),
             pw.SizedBox(height: 8),
 
-            // Details Table
             pw.Table(
               border: pw.TableBorder.all(color: headerColor),
               children: [
-                // Table Header
                 pw.TableRow(
                   decoration: pw.BoxDecoration(color: headerColor),
                   children: [
@@ -479,7 +466,6 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
                     ),
                   ],
                 ),
-                // Alternating Rows
                 ...details.asMap().entries.map((entry) {
                   final index = entry.key;
                   final detail = entry.value;
@@ -515,12 +501,10 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
     ),
   );
 
-  // Save the PDF to a file
   final output = await getTemporaryDirectory();
   final file = File("${output.path}/cari_hesap_detay.pdf");
   await file.writeAsBytes(await pdf.save());
-
-  // Share the PDF
+  
   await Share.shareXFiles(
     [XFile(file.path)],
     text: 'Cari Hesap Detayları: ${cariHesap.name}',

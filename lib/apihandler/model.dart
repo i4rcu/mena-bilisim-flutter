@@ -76,8 +76,8 @@ class Kullanici {
 class Lisnas {
   final int id;
   final String name;
-  final DateTime licenseStartDate;
-  final DateTime licenseEndDate;
+  final String licenseStartDate;
+  final String licenseEndDate;
   Lisnas({
     required this.id,
     required this.name,
@@ -89,8 +89,8 @@ class Lisnas {
     return Lisnas(
       id: json['id'],
       name: json['kullanici_ad'],
-      licenseStartDate: DateTime.parse(json['lisans_tarihi']),
-      licenseEndDate: DateTime.parse(json['lisans_bitis_tarihi']),
+      licenseStartDate: json['lisans_tarihi'],
+      licenseEndDate: json['lisans_bitis_tarihi'],
     );
   }
 }

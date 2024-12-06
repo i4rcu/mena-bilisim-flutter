@@ -5,10 +5,9 @@ import 'package:fitness_dashboard_ui/screens/main_screen.dart';
 import 'package:fitness_dashboard_ui/screens/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:animate_do/animate_do.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/login_bloc/login_bloc.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:shared_preferences/shared_preferences.dart'; // Add 'as encrypt' alias
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -58,51 +57,16 @@ class _LoginPageState extends State<LoginPage> {
             if (state is LoginSuccess) {
               UserSession().userId = state.userId;
               print("This is kullanici vasfi: " + state.kullanici_vasfi);
-              _saveUserData(); // Save user data if login is successful
+              _saveUserData();
               if (state.kullanici_vasfi == "User") {
                 Navigator.pushReplacement(
                   context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        MainScreen(),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(1.0, 0.0);
-                      const end = Offset(0.0, 0.0);
-                      const curve = Curves.ease;
-      
-                      var tween = Tween(begin: begin, end: end)
-                          .chain(CurveTween(curve: curve));
-                      var offsetAnimation = animation.drive(tween);
-      
-                      return SlideTransition(
-                        position: offsetAnimation,
-                        child: child,
-                      );
-                    },
-                  ),
+                  MaterialPageRoute(builder: (_) => MainScreen()),
                 );
               } else if (state.kullanici_vasfi == "Admin") {
                 Navigator.pushReplacement(
                   context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        AdminScreen(),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(1.0, 0.0);
-                      const end = Offset(0.0, 0.0);
-                      const curve = Curves.ease;
-                      var tween = Tween(begin: begin, end: end)
-                          .chain(CurveTween(curve: curve));
-                      var offsetAnimation = animation.drive(tween);
-      
-                      return SlideTransition(
-                        position: offsetAnimation,
-                        child: child,
-                      );
-                    },
-                  ),
+                  MaterialPageRoute(builder: (_) => AdminScreen()),
                 );
               }
             } else if (state is LoginFailure) {
@@ -114,17 +78,10 @@ class _LoginPageState extends State<LoginPage> {
           builder: (context, state) {
             if (state is LoginLoading) {
               return Center(
-                child: Container(
-                  color:  Color.fromRGBO(36, 64, 72, 50),
-                  width: 150,
-                  child: LinearProgressIndicator(
-                    backgroundColor: Color.fromRGBO(36, 64, 72, 50),
-                    color: Colors.orange[900],
-                  ),
-                ),
+                child: CircularProgressIndicator(color: Colors.orange[900]),
               );
             }
-      
+
             return _buildLoginForm(context);
           },
         ),
@@ -139,9 +96,9 @@ class _LoginPageState extends State<LoginPage> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           colors: [
-             Colors.orange[900]!,
-             Colors.orange[900]!,
-             Colors.orange[900]!,
+            Colors.orange[900]!,
+            Colors.orange[900]!,
+            Colors.orange[900]!,
           ],
         ),
       ),
@@ -154,20 +111,14 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                FadeInUp(
-                  duration: Duration(milliseconds: 1000),
-                  child: Text(
-                    "Giriş",
-                    style: TextStyle(color: Colors.white, fontSize: 40),
-                  ),
+                Text(
+                  "Giriş",
+                  style: TextStyle(color: Colors.white, fontSize: 40),
                 ),
                 SizedBox(height: 10),
-                FadeInUp(
-                  duration: Duration(milliseconds: 1300),
-                  child: Text(
-                    "Hoş Geldiniz",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
+                Text(
+                  "Hoş Geldiniz",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ],
             ),
@@ -187,180 +138,134 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   children: <Widget>[
                     SizedBox(height: 60),
-                    FadeInUp(
-                      duration: Duration(milliseconds: 1400),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color.fromRGBO(225, 95, 27, .3),
-                              blurRadius: 20,
-                              offset: Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Center(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 5),
-                                decoration: BoxDecoration(
-                                  color: Color(
-                                      0xFFF3F3F3), // Light background color
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: TextField(
-                                  controller: _usernameController,
-                                  style: TextStyle(
-                                      color: Colors.black87), // Main text color
-                                  decoration: InputDecoration(
-                                    filled: false,
-                                    fillColor: Colors
-                                        .white, // Fill color of the input area
-                                    hintText: "Kullanıcı adı",
-                                    hintStyle: TextStyle(
-                                        color: Colors
-                                            .grey.shade600), // Hint text color
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide:
-                                          BorderSide.none, // Remove border
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                          color: Colors.orange[600]!, width: 2),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Center(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 5),
-                                decoration: BoxDecoration(
-                                  color: Color(
-                                      0xFFF3F3F3), // Light background color
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: TextField(
-                                  controller: _passwordController,
-                                  obscureText: true,
-                                  style: TextStyle(
-                                      color: Colors.black87), // Main text color
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors
-                                        .white, // Fill color of the input area
-                                    hintText: "Şifre",
-                                    hintStyle: TextStyle(
-                                        color: Colors
-                                            .grey.shade600), // Hint text color
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide:
-                                          BorderSide.none, // Remove border
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                          color: Colors.orange[600]!, width: 2),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    FadeInUp(
-                      duration: Duration(milliseconds: 1600),
-                      child: Row(
-                        children: <Widget>[
-                          Checkbox(
-                            activeColor: Colors.orange[600],
-                            value: _rememberMe,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _rememberMe = value ?? false;
-                              });
-                            },
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromRGBO(225, 95, 27, .3),
+                            blurRadius: 20,
+                            offset: Offset(0, 10),
                           ),
-                          Text("Beni Hatırla",style: TextStyle(color: Colors.white),),
+                        ],
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 5),
+                            child: TextField(
+                              controller: _usernameController,
+                              style: TextStyle(color: Colors.black87),
+                              decoration: InputDecoration(
+                                hintText: "Kullanıcı adı",
+                                hintStyle: TextStyle(color: Colors.grey.shade600),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                      color: Colors.orange[600]!, width: 2),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 5),
+                            child: TextField(
+                              controller: _passwordController,
+                              obscureText: true,
+                              style: TextStyle(color: Colors.black87),
+                              decoration: InputDecoration(
+                                hintText: "Şifre",
+                                hintStyle: TextStyle(color: Colors.grey.shade600),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                      color: Colors.orange[600]!, width: 2),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     SizedBox(height: 20),
-                    FadeInUp(
-                      duration: Duration(milliseconds: 1600),
-                      child: MaterialButton(
-                        onPressed: () {
-                          context.read<LoginBloc>().add(LoginSubmitted(
-                                username: _usernameController.text,
-                                password: EncryptionHelper.encryptPassword(
-                                    _passwordController.text),
-                              ));
-                        },
-                        height: 50,
-                        color: Colors.orange[900],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          activeColor: Colors.orange[600],
+                          value: _rememberMe,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _rememberMe = value ?? false;
+                            });
+                          },
                         ),
-                        child: Center(
-                          child: Text(
-                            "Giriş",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        Text(
+                          "Beni Hatırla",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    MaterialButton(
+                      onPressed: () {
+                        context.read<LoginBloc>().add(LoginSubmitted(
+                              username: _usernameController.text,
+                              password: EncryptionHelper.encryptPassword(
+                                  _passwordController.text),
+                            ));
+                      },
+                      height: 50,
+                      color: Colors.orange[900],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Giriş",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
                     SizedBox(height: 20),
-                    FadeInUp(
-                      duration: Duration(milliseconds: 1700),
-                      child: Text(
-                        "IP'nizi ayarlayın",
-                        style: TextStyle(color: Colors.grey),
-                      ),
+                    Text(
+                      "IP'nizi ayarlayın",
+                      style: TextStyle(color: Colors.grey),
                     ),
                     SizedBox(height: 10),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: FadeInUp(
-                            duration: Duration(milliseconds: 1800),
-                            child: MaterialButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (_) => Settings()),
-                                );
-                              },
-                              height: 50,
-                              color: Color.fromRGBO(65, 190, 184, 20),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Ayarlar",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
+                    MaterialButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => Settings()),
+                        );
+                      },
+                      height: 50,
+                      color: Color.fromRGBO(65, 190, 184, 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Ayarlar",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
@@ -372,6 +277,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
+
 
 class EncryptionHelper {
   static final key = encrypt.Key(Uint8List.fromList(

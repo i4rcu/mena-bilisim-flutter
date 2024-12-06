@@ -26,7 +26,6 @@ class _BankalarListPageState extends State<BankalarListPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     BlocProvider.of<BankalarBloc>(context).add(
       FetchBankalar());

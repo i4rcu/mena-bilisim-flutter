@@ -27,26 +27,24 @@ class ActivityDetailsCard extends StatelessWidget {
           totalBakiyeText = 'Error: ${state.message}';
         }
 
-        return Expanded(
-          child: Container(
-            child: Column(
-              children: [
-                SizedBox(height: isDesktop ? 16 : 8), // Larger spacing for desktop
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildKasaCard(
-                      context,
-                      'Tüm Kasalar',
-                      kasalar,
-                      Color.fromRGBO(241, 108, 39, 20),
-                      '${totalBakiyeText}',
-                      isDesktop,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+        return Container(
+          child: Column(
+            children: [
+              SizedBox(height: isDesktop ? 16 : 8), // Larger spacing for desktop
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildKasaCard(
+                    context,
+                    'Tüm Kasalar',
+                    kasalar,
+                    Color.fromRGBO(241, 108, 39, 20),
+                    '${totalBakiyeText}',
+                    isDesktop,
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },
@@ -179,4 +177,4 @@ class ActivityDetailsCard extends StatelessWidget {
   );
 }
 
-}
+} 

@@ -3,9 +3,9 @@ import 'package:fitness_dashboard_ui/bloc/bloc/admin_bloc/bloc/admin_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/cari_hesaplar_bloc/cari_hesap_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/malzemeler_bloc/malzemeler_bloc.dart';
 import 'package:fitness_dashboard_ui/httpOverRides.dart';
+import 'package:fitness_dashboard_ui/screens/optimized_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';  
-import 'package:fitness_dashboard_ui/screens/login_screen.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/login_bloc/login_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/dropdown_bloc/dropdown_bloc.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => AdminBloc(ApiHandler()))
 
         ],
-        child: LoginPage(),
+        child: LoginPageOptimized(),
       ),
     );
   }

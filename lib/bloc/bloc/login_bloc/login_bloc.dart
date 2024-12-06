@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:fitness_dashboard_ui/EncryptionHelper.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 
 part 'login_event.dart';
@@ -26,16 +28,22 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(LoginFailure(error: 'Lisansınız Bulunmamaktadır.'));
         return;
       }
-
-      final now = DateTime.now();
-      print(license.licenseEndDate);
-      print(license.licenseStartDate);
-      print(now);
-if ((now.isAfter(license.licenseStartDate) || now.isAtSameMomentAs(license.licenseStartDate)) &&
-    (now.isBefore(license.licenseEndDate) || now.isAtSameMomentAs(license.licenseEndDate))) {
-  emit(LoginSuccess(userId: user.id, kullanici_vasfi: user.kullaniciVasfi));
-}
- else {
+      
+         final now = DateTime.now();
+      print('License start date: ${license.licenseStartDate}');
+      print("1ssssssssssssss: " + DateEncryptor().decrypt("68f71tFF70SAFZY0dV9owQ==").toString());
+      
+if ((now.isAfter(DateTime.parse(
+                  DateEncryptor().decrypt(license.licenseStartDate).toString())) ||
+              now.isAtSameMomentAs(DateTime.parse(
+                 DateEncryptor().decrypt(license.licenseStartDate).toString()))) &&
+          (now.isBefore(DateTime.parse(
+                  DateEncryptor().decrypt(license.licenseEndDate).toString())) ||
+              now.isAtSameMomentAs(DateTime.parse(
+                 DateEncryptor().decrypt(license.licenseEndDate).toString())))) {
+        emit(LoginSuccess(
+            userId: user.id, kullanici_vasfi: user.kullaniciVasfi));
+      } else {
         emit(LoginFailure(error: 'Lisansınız Geçerli Değildir.'));
       }
     } catch (e) {

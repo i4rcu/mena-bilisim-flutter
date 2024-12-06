@@ -23,26 +23,24 @@ class CariHeasplarKart extends StatelessWidget {
           totalBakiyeText = 'Error: ${state.message}';
         }
 
-        return Expanded(
-          child: Container(
-            child: Column(
-              children: [
-                SizedBox(height: isDesktop ? 16 : 8), // Larger spacing for desktop
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildKasaCard(
-                      context,
-                      'Cari Hesaplar',
-                      cariHesaplar,
-                      Color.fromRGBO(65, 190, 184, 20),
-                      'Hesap Sayısı: ${totalBakiyeText}',
-                      isDesktop,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+        return Container(
+          child: Column(
+            children: [
+              SizedBox(height: isDesktop ? 16 : 8), // Larger spacing for desktop
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildKasaCard(
+                    context,
+                    'Cari Hesaplar',
+                    cariHesaplar,
+                    Color.fromRGBO(65, 190, 184, 20),
+                    'Hesap Sayısı: ${totalBakiyeText}',
+                    isDesktop,
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },

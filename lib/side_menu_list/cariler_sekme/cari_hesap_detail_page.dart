@@ -443,7 +443,7 @@ void _showIslemPopup(
                         itemCount: state.virmanFisiDetails.length,
                         itemBuilder: (context, index) {
                           var item = state.virmanFisiDetails[index];
-                          return ListTile(2
+                          return ListTile(
                             title: Text(
                               item.name!,
                               style: TextStyle(
