@@ -14,6 +14,7 @@ class AlinanFaturalarBloc
     on<LoadAlinanFaturalar>(_onLoadAlinanFaturalar);
     on<LoadSatisFaturalar>(_onLoadSatisFaturalar);
     on<LoadFaturaDetay>(_onLoadFaturaDetay);
+    on<LoadAlinanAndSatisFaturalar>(_loadallfaturas);
   }
   void _onLoadAlinanFaturalar(
       LoadAlinanFaturalar event, Emitter<AlinanFaturalarState> emit) async {
@@ -57,6 +58,23 @@ class AlinanFaturalarBloc
           event.tur);
 
       emit(FaturaDetayLoadSuccess(faturalar));
+    } catch (e) {
+      emit(FaturaDetayLoadFailure(error: e.toString()));
+    }
+  }
+  void _loadallfaturas(
+      LoadAlinanAndSatisFaturalar event, Emitter<AlinanFaturalarState> emit) async {
+    final prefs = await SharedPreferences.getInstance();
+    emit(FaturaDetayLoading());
+    try {
+      final alinanFaturalar = await apiHandler.fetchAlinanFaturalar(
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01');
+      final satisFaturalar = await apiHandler.fetchSatisFaturalar(
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01');
+
+      emit(AlinanAndSatisFaturalarLoadSuccess(alinanFaturalar: alinanFaturalar,satisFaturalar: satisFaturalar));
     } catch (e) {
       emit(FaturaDetayLoadFailure(error: e.toString()));
     }

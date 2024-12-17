@@ -1,6 +1,7 @@
 import 'package:fitness_dashboard_ui/UserSession.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/admin_bloc/bloc/admin_bloc.dart';
+import 'package:fitness_dashboard_ui/bloc/bloc/alinan_faturala_bloc/alinan_faturalar_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/cari_hesaplar_bloc/cari_hesap_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/dropdown_bloc/dropdown_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/login_bloc/login_bloc.dart';
@@ -42,6 +43,7 @@ class MainScreen extends StatelessWidget {
         home:MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => LoginBloc()),
+          BlocProvider(create: (context) => AlinanFaturalarBloc(ApiHandler())),
           BlocProvider(create: (context) => DropdownBloc(ApiHandler())),
           BlocProvider(create: (context) => MalzemelerBloc(ApiHandler())),
           BlocProvider(create: (context) => CariHesapBloc(ApiHandler())),
@@ -50,7 +52,7 @@ class MainScreen extends StatelessWidget {
         child:
          SafeArea(
            child: Scaffold(
-            backgroundColor: Color.fromRGBO(34, 54, 69, 100),
+            backgroundColor:  Color.fromRGBO(35, 55, 69, 10),
             drawer: !isDesktop
                 ? const SizedBox(
                     width: 250,

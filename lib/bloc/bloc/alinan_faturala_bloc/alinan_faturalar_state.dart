@@ -50,3 +50,12 @@ class FaturaDetayLoadFailure extends AlinanFaturalarState {
 
   FaturaDetayLoadFailure({required this.error});
 }
+class AlinanAndSatisFaturalarLoadSuccess extends AlinanFaturalarState {
+  final List<AlinanFatura> alinanFaturalar;
+  final List<AlinanFatura> satisFaturalar;
+
+  AlinanAndSatisFaturalarLoadSuccess({
+    required this.alinanFaturalar,
+    required this.satisFaturalar,
+  });
+}

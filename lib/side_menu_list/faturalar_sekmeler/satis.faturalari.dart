@@ -334,6 +334,9 @@ class _SatisFaturalarPageState extends State<SatisFaturalarPage> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return FaturaDetayDialog(
+                                    date: fatura.date,
+                                    name: fatura.definition,
+                                    trcode: fatura.trCode,
                                     tur: fatura.TrCodeNum,
                                     logicalRef: fatura.logicalRef,
                                   );

@@ -17,8 +17,8 @@ class ApiHandler {
   Future<void> _loadBaseUri() async {
     final prefs = await SharedPreferences.getInstance();
     final ipAddress =
-        prefs.getString('ipAddress') ?? "http://95.70.188.118:9090/api";
-    baseUri = "http://$ipAddress/api";
+        prefs.getString('ipAddress') ?? "https://95.70.188.118:9090/api";
+    baseUri = "https://$ipAddress/api";
   }
 
   Future<List<Firma>> getUserData() async {

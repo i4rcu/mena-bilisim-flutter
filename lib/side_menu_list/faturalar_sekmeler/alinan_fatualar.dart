@@ -321,6 +321,9 @@ class _AlinanFaturalarPageState extends State<AlinanFaturalarPage> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return FaturaDetayDialog(
+                                    trcode: cariHesap.trCode,
+                                    date: cariHesap.date,
+                                    name: cariHesap.definition,
                                     tur: cariHesap.TrCodeNum,
                                     logicalRef: cariHesap.logicalRef,
                                   );

@@ -29,3 +29,9 @@ class LoadFaturaDetay extends AlinanFaturalarEvent {
       required this.logicalref,
       required this.tur});
 }
+class LoadAlinanAndSatisFaturalar extends AlinanFaturalarEvent {
+  final String prefix;
+  final String suffix;
+
+  LoadAlinanAndSatisFaturalar({required this.prefix, required this.suffix});
+}

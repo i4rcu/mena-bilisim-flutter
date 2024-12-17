@@ -1,5 +1,7 @@
+import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/cari_hesaplar_bloc/cari_hesap_bloc.dart';
+import 'package:fitness_dashboard_ui/side_menu_list/cariler_sekme/cari_hesap_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -51,7 +53,14 @@ class CariHeasplarKart extends StatelessWidget {
       List<CariHesap> cariHesaplar, Color color, String toplam, bool isDesktop) {
     return Expanded(
       child: GestureDetector(
-        onTap: () => _showKasaListPopup(context, cariHesaplar, isDesktop),
+        onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => CariHesapBloc(ApiHandler()),
+            child: CariHesapListPage(),
+          ),
+        ),
+      ),
         child: Card(
           color: color,
           elevation: 5,

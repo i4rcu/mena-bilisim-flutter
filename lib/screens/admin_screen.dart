@@ -40,7 +40,7 @@ class AdminScreen extends StatelessWidget {
         child:
          SafeArea(
            child: Scaffold(
-            backgroundColor: Color.fromRGBO(34, 54, 69, 100),
+            backgroundColor:  Color.fromRGBO(35, 55, 69, 10),
             drawer: !isDesktop
                 ? const SizedBox(
                     width: 250,

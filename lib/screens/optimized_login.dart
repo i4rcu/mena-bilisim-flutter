@@ -1,13 +1,13 @@
 import 'dart:typed_data';
-import 'package:fitness_dashboard_ui/UserSession.dart';
-import 'package:fitness_dashboard_ui/screens/admin_screen.dart';
-import 'package:fitness_dashboard_ui/screens/main_screen.dart';
-import 'package:fitness_dashboard_ui/screens/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/login_bloc/login_bloc.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitness_dashboard_ui/screens/admin_screen.dart';
+import 'package:fitness_dashboard_ui/screens/main_screen.dart';
+import 'package:fitness_dashboard_ui/screens/settings.dart';
+import 'package:fitness_dashboard_ui/UserSession.dart';
 
 class LoginPageOptimized extends StatefulWidget {
   @override
@@ -61,6 +61,9 @@ class _LoginPageState extends State<LoginPageOptimized> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromRGBO(36, 64, 72, 50),
@@ -83,56 +86,57 @@ class _LoginPageState extends State<LoginPageOptimized> {
               );
             }
 
-            return _buildLoginForm(context);
+            return _buildLoginForm(context, screenWidth, screenHeight);
           },
         ),
       ),
     );
   }
 
-  Widget _buildLoginForm(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          colors: [
-            Color.fromRGBO(255, 87, 34, 1),
-            Color.fromRGBO(255, 87, 34, 0.9),
-            Color.fromRGBO(255, 87, 34, 0.8),
-          ],
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const SizedBox(height: 80),
-          const Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text("Giriş", style: TextStyle(color: Colors.white, fontSize: 40)),
-                SizedBox(height: 10),
-                Text("Hoş Geldiniz", style: TextStyle(color: Colors.white, fontSize: 18)),
-              ],
-            ),
+  Widget _buildLoginForm(BuildContext context, double screenWidth, double screenHeight) {
+    return SingleChildScrollView(
+      child: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            colors: [
+              Color.fromRGBO(255, 87, 34, 1),
+              Color.fromRGBO(255, 87, 34, 0.9),
+              Color.fromRGBO(255, 87, 34, 0.8),
+            ],
           ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: Container(
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const SizedBox(height: 40),
+            const Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("Giriş", style: TextStyle(color: Colors.white, fontSize: 40)),
+                  SizedBox(height: 10),
+                  Text("Hoş Geldiniz", style: TextStyle(color: Colors.white, fontSize: 18)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              height: screenHeight * 0.8,
               decoration: const BoxDecoration(
-                color: const Color.fromRGBO(34, 54, 69, 20),
-                borderRadius: const BorderRadius.only(
+                color: Color.fromRGBO(34, 54, 69, 20),
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(60),
                   topRight: Radius.circular(60),
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(30),
+                padding: EdgeInsets.all(screenWidth * 0.08),
                 child: Column(
                   children: <Widget>[
-                    const SizedBox(height: 60),
+                    const SizedBox(height: 40),
                     _buildInputCard(),
                     const SizedBox(height: 20),
                     _buildRememberMeCheckbox(),
@@ -146,8 +150,8 @@ class _LoginPageState extends State<LoginPageOptimized> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -181,7 +185,7 @@ class _LoginPageState extends State<LoginPageOptimized> {
   Widget _buildInputField(
       {required TextEditingController controller, required String hintText, bool obscureText = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: TextField(
         controller: controller,
         obscureText: obscureText,
@@ -189,6 +193,8 @@ class _LoginPageState extends State<LoginPageOptimized> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: Colors.grey.shade600),
+          filled: true,
+          fillColor: Colors.white,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,

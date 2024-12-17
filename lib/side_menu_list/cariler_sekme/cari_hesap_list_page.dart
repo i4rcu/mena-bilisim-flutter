@@ -12,6 +12,7 @@ import 'package:pdf/pdf.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
+
 class CariHesapListPage extends StatefulWidget {
   @override
   _CariHesapListPageState createState() => _CariHesapListPageState();
@@ -206,15 +207,14 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => CariHesapDetailPage(
-                                      logicalref: cariHesap.logicalRef,
-                                    ),
+                                        logicalref: cariHesap.logicalRef),
                                   ),
                                 );
                               },
                             ));
                       },
                     );
-                  }else if(state is CariHesapDetailesLoaded){
+                  } else if (state is CariHesapDetailesLoaded) {
                     filteredCariHesaplar =
                         state.cariHesaplar.where((cariHesap) {
                       return cariHesap.name
@@ -314,7 +314,6 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
                             ));
                       },
                     );
-
                   } else if (state is CariHesapError) {
                     return Center(child: Text('Error: ${state.message}'));
                   }
@@ -380,136 +379,139 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
       ..createSync(recursive: true)
       ..writeAsBytesSync(excel.encode()!);
     OpenFile.open(filePath);
-    
   }
 
-  void _generateAndSharePdf(CariHesap cariHesap, List<CariHesapDetail> details) async {
-  final pdf = pw.Document();
+  void _generateAndSharePdf(
+      CariHesap cariHesap, List<CariHesapDetail> details) async {
+    final pdf = pw.Document();
 
-  final fontData = await rootBundle.load('assets/fonts/NotoSans-VariableFont_wdth,wght.ttf');
-  final ttf = pw.Font.ttf(fontData);
+    final fontData = await rootBundle
+        .load('assets/fonts/NotoSans-VariableFont_wdth,wght.ttf');
+    final ttf = pw.Font.ttf(fontData);
 
-  final headerColor = PdfColor.fromHex('#4CAF50');
-  final alternateRowColor = PdfColors.grey300;
-  final textColor = PdfColor.fromHex('#212121');
+    final headerColor = PdfColor.fromHex('#4CAF50');
+    final alternateRowColor = PdfColors.grey300;
+    final textColor = PdfColor.fromHex('#212121');
 
-  pdf.addPage(
-    pw.Page(
-      pageFormat: PdfPageFormat.a4,
-      build: (pw.Context context) {
-        return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text('Cari Hesap Ekstresi',
-                style: pw.TextStyle(
-                    fontSize: 24,
-                    fontWeight: pw.FontWeight.bold,
-                    color: headerColor,
-                    font: ttf)),
-            pw.SizedBox(height: 16),
-
-            pw.Container(
-              decoration: pw.BoxDecoration(
-                border: pw.Border.all(color: headerColor, width: 2),
-                borderRadius: pw.BorderRadius.circular(8),
-              ),
-              padding: const pw.EdgeInsets.all(12),
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Text('Adı: ${cariHesap.name}',
-                      style: pw.TextStyle(fontSize: 16, color: textColor, font: ttf)),
-                  pw.Text('Kodu: ${cariHesap.code}',
-                      style: pw.TextStyle(fontSize: 16, color: textColor, font: ttf)),
-                  pw.Text('Bakiye: ${cariHesap.bakiye.toStringAsFixed(2)} TL',
-                      style: pw.TextStyle(fontSize: 16, color: textColor, font: ttf)),
-                ],
-              ),
-            ),
-            pw.SizedBox(height: 16),
-
-            pw.Text('Detayları:',
-                style: pw.TextStyle(
-                    fontSize: 18, fontWeight: pw.FontWeight.bold, color: headerColor, font: ttf)),
-            pw.SizedBox(height: 8),
-
-            pw.Table(
-              border: pw.TableBorder.all(color: headerColor),
-              children: [
-                pw.TableRow(
-                  decoration: pw.BoxDecoration(color: headerColor),
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('Cari Hesap Ekstresi',
+                  style: pw.TextStyle(
+                      fontSize: 24,
+                      fontWeight: pw.FontWeight.bold,
+                      color: headerColor,
+                      font: ttf)),
+              pw.SizedBox(height: 16),
+              pw.Container(
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(color: headerColor, width: 2),
+                  borderRadius: pw.BorderRadius.circular(8),
+                ),
+                padding: const pw.EdgeInsets.all(12),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text('Tarih',
-                          style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.bold,
-                              color: PdfColors.white,
-                              font: ttf)),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text('İşlem Türü',
-                          style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.bold,
-                              color: PdfColors.white,
-                              font: ttf)),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text('Tutar',
-                          style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.bold,
-                              color: PdfColors.white,
-                              font: ttf)),
-                    ),
+                    pw.Text('Adı: ${cariHesap.name}',
+                        style: pw.TextStyle(
+                            fontSize: 16, color: textColor, font: ttf)),
+                    pw.Text('Kodu: ${cariHesap.code}',
+                        style: pw.TextStyle(
+                            fontSize: 16, color: textColor, font: ttf)),
+                    pw.Text('Bakiye: ${cariHesap.bakiye.toStringAsFixed(2)} TL',
+                        style: pw.TextStyle(
+                            fontSize: 16, color: textColor, font: ttf)),
                   ],
                 ),
-                ...details.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final detail = entry.value;
-                  final isAlternate = index % 2 == 1;
-                  return pw.TableRow(
-                    decoration: pw.BoxDecoration(
-                      color: isAlternate ? alternateRowColor : PdfColors.white,
-                    ),
+              ),
+              pw.SizedBox(height: 16),
+              pw.Text('Detayları:',
+                  style: pw.TextStyle(
+                      fontSize: 18,
+                      fontWeight: pw.FontWeight.bold,
+                      color: headerColor,
+                      font: ttf)),
+              pw.SizedBox(height: 8),
+              pw.Table(
+                border: pw.TableBorder.all(color: headerColor),
+                children: [
+                  pw.TableRow(
+                    decoration: pw.BoxDecoration(color: headerColor),
                     children: [
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text(detail.date!,
-                            style: pw.TextStyle(color: textColor, font: ttf)),
+                        child: pw.Text('Tarih',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                color: PdfColors.white,
+                                font: ttf)),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text(detail.trCode!,
-                            style: pw.TextStyle(color: textColor, font: ttf)),
+                        child: pw.Text('İşlem Türü',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                color: PdfColors.white,
+                                font: ttf)),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('${detail.amount!.toStringAsFixed(2)} TL',
-                            style: pw.TextStyle(color: textColor, font: ttf)),
+                        child: pw.Text('Tutar',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                color: PdfColors.white,
+                                font: ttf)),
                       ),
                     ],
-                  );
-                }).toList(),
-              ],
-            ),
-          ],
-        );
-      },
-    ),
-  );
+                  ),
+                  ...details.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final detail = entry.value;
+                    final isAlternate = index % 2 == 1;
+                    return pw.TableRow(
+                      decoration: pw.BoxDecoration(
+                        color:
+                            isAlternate ? alternateRowColor : PdfColors.white,
+                      ),
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(detail.date!,
+                              style: pw.TextStyle(color: textColor, font: ttf)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(detail.trCode!,
+                              style: pw.TextStyle(color: textColor, font: ttf)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                              '${detail.amount!.toStringAsFixed(2)} TL',
+                              style: pw.TextStyle(color: textColor, font: ttf)),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
 
-  final output = await getTemporaryDirectory();
-  final file = File("${output.path}/cari_hesap_detay.pdf");
-  await file.writeAsBytes(await pdf.save());
-  
-  await Share.shareXFiles(
-    [XFile(file.path)],
-    text: 'Cari Hesap Detayları: ${cariHesap.name}',
-  );
-}
+    final output = await getTemporaryDirectory();
+    final file = File("${output.path}/cari_hesap_detay.pdf");
+    await file.writeAsBytes(await pdf.save());
 
-
-
+    await Share.shareXFiles(
+      [XFile(file.path)],
+      text: 'Cari Hesap Detayları: ${cariHesap.name}',
+    );
+  }
 }

@@ -1,47 +1,40 @@
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:fitness_dashboard_ui/apihandler/model.dart';
-import 'package:fitness_dashboard_ui/side_menu_list/bankalar_sekme/bankalar_list_page.dart';
+import 'package:fitness_dashboard_ui/bloc/bloc/alinan_faturala_bloc/alinan_faturalar_bloc.dart';
+import 'package:fitness_dashboard_ui/side_menu_list/faturalar_sekmeler/satis.faturalari.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fitness_dashboard_ui/bloc/bloc/bankalar_bloc/bankalar_bloc.dart';
 import 'package:intl/intl.dart';
 
-class BankalarKart extends StatelessWidget {
+class SatisFaturalari extends StatelessWidget {
   final bool isDesktop;
 
-  const BankalarKart({super.key, required this.isDesktop});
+  const SatisFaturalari({super.key, required this.isDesktop});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BankalarBloc, BankalarState>(
+    return BlocBuilder<AlinanFaturalarBloc, AlinanFaturalarState>(
       builder: (context, state) {
         String totalBakiyeText = 'Yükleniyor..';
-        List<Banka> bankalar = [];
-        final formatter1 = NumberFormat('#,##0.00', 'tr_TR');
-
-        if (state is BankalarLoaded) {
-          totalBakiyeText = formatter1
-              .format(state.Bankalar.fold(0.0, (sum, banka) => sum + banka.bakiye!))
-              .toString();
-          bankalar = state.Bankalar;
-        } else if (state is BankalarError) {
-          totalBakiyeText = 'Error: ${state.message}';
+        print(state.toString());
+        if (state is AlinanAndSatisFaturalarLoadSuccess ) {
+          totalBakiyeText = 'Toplam Fatura Sayısı: ${state.satisFaturalar.length}';
+        } else if (state is SatisFaturaLoadFailure) {
+          totalBakiyeText = 'Error: ${state.error}';
         }
 
         return Container(
-          width: isDesktop ? 800 : 550, // Wider container for desktop
           child: Column(
             children: [
-              SizedBox(height: isDesktop ? 16 : 8), // Adjusted height for desktop
+              SizedBox(height: isDesktop ? 16 : 8), // Larger spacing for desktop
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _buildKasaCard(
                     context,
-                    'Tüm Bankalar',
-                    bankalar,
-                    Color.fromRGBO(59, 180, 115, 20),
-                    'Toplam Bakiye: ${totalBakiyeText}',
+                    'Satış Faturaları',
+                    Color.fromRGBO(241, 108, 39, 20),
+                    '${totalBakiyeText}',
                     isDesktop,
                   ),
                 ],
@@ -53,24 +46,24 @@ class BankalarKart extends StatelessWidget {
     );
   }
 
-  Widget _buildKasaCard(BuildContext context, String title,
-      List<Banka> bankalar, Color color, String toplam, bool isDesktop) {
+  Widget _buildKasaCard(BuildContext context, String title, 
+      Color color, String toplam, bool isDesktop) {
     return Expanded(
       child: GestureDetector(
-        onTap: () =>Navigator.of(context).push(
+        onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => BlocProvider(
-              create: (context) => BankalarBloc(ApiHandler()),
-              child: BankalarListPage(),
+              create: (context) => AlinanFaturalarBloc(ApiHandler()),
+              child: SatisFaturalarPage(),
             ),
           ),
         ),
         child: Card(
           color: color,
           elevation: 5,
-          margin: EdgeInsets.all(isDesktop ? 13 : 5), // Adjusted margin for desktop
+          margin: EdgeInsets.all(isDesktop ? 13 : 5), // Larger margin for desktop
           child: Padding(
-            padding: EdgeInsets.all(isDesktop ? 20.0 : 15.0), // Adjusted padding for desktop
+            padding: EdgeInsets.all(isDesktop ? 20.0 : 15.0), // Larger padding for desktop
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -82,15 +75,15 @@ class BankalarKart extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: isDesktop ? 20 : 10), // Adjusted height for desktop
+                SizedBox(height: isDesktop ? 20 : 10), // Larger spacing for desktop
                 Text(
                   toplam,
                   style: TextStyle(
-                    fontSize: isDesktop ? 16 : 14, // Larger font size for desktop
+                    fontSize: isDesktop ? 16 : 12, // Larger font size for desktop
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: isDesktop ? 16 : 10), // Adjusted height for desktop
+                SizedBox(height: isDesktop ? 16 : 10), // Larger spacing for desktop
                 Text(
                   'Ayrıntılar için tıklayın',
                   style: TextStyle(
@@ -106,15 +99,16 @@ class BankalarKart extends StatelessWidget {
     );
   }
 
-  void _showKasaListPopup(BuildContext context, List<Banka> bankalar, bool isDesktop) {
-  final formatter = NumberFormat('#,##0.00', 'tr_TR');
+  void _showKasaListPopup(BuildContext context, List<KasaDto> kasalar, bool isDesktop) {
+  final formatter = NumberFormat('#,##0.00', 'tr_TR'); // Ensure zero is handled as 0.00
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: Color.fromRGBO(36, 64, 72, 50),
         title: Text(
-          'Bankalar',
+          'Kasalar',
           style: TextStyle(
             color: Colors.white,
             fontSize: isDesktop ? 20 : 16, // Larger font size for desktop
@@ -123,10 +117,10 @@ class BankalarKart extends StatelessWidget {
         content: Container(
           height: 400,
           width: double.maxFinite,
-          child: bankalar.isEmpty
+          child: kasalar.isEmpty
               ? Center(
                   child: Text(
-                    'Henüz herhangi bir banka bilgileri girilmemiştir.',
+                    'Henüz herhangi bir kasa bilgileri girilmemiştir.',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: isDesktop ? 18 : 14, // Larger font size for desktop
@@ -135,11 +129,11 @@ class BankalarKart extends StatelessWidget {
                 )
               : ListView.builder(
                   shrinkWrap: true,
-                  itemCount: bankalar.length,
+                  itemCount: kasalar.length,
                   itemBuilder: (context, index) {
-                    final banka = bankalar[index];
-                    final bakiye = banka.bakiye;
-                    final bakiyeTextColor = bakiye! >= 0
+                    final kasa = kasalar[index];
+                    final bakiye = kasa.bakiye;
+                    final bakiyeTextColor = bakiye >= 0
                         ? Colors.green.shade400
                         : Color.fromARGB(255, 255, 20, 3);
                     final formattedBakiye = formatter.format(bakiye.abs());
@@ -149,7 +143,7 @@ class BankalarKart extends StatelessWidget {
 
                     return ListTile(
                       title: Text(
-                        banka.banka!,
+                        kasa.name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: isDesktop ? 18 : 14, // Larger font size for desktop
@@ -185,4 +179,4 @@ class BankalarKart extends StatelessWidget {
   );
 }
 
-}
+} 
