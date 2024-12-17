@@ -433,7 +433,8 @@ void _showIslemPopup(
                     return Center(child: CircularProgressIndicator());
                   } else if (state is CariHesapVirmanFisiDetailesLoaded) {
                     if (state.virmanFisiDetails.isEmpty) {
-                      return Center(child: Text("No data available"));
+                      return Center(child: Text("Gösterilecek bilgi bulunmamaktadır." ,
+                      style: TextStyle(color: Colors.white),));
                     }
                     return SizedBox(
                       height: 300.0, 
@@ -465,7 +466,8 @@ void _showIslemPopup(
                     );
                   } else if (state is CariHesapBorcDekontuDetailesLoaded) {
                     if (state.BorcDekontuDetails.isEmpty) {
-                      return Center(child: Text("No data available"));
+                      return Center(child: Text("Gösterilecek bilgi bulunmamaktadır." ,
+                      style: TextStyle(color: Colors.white),));
                     }
                     return SizedBox(
                       height: 300.0,
@@ -497,7 +499,8 @@ void _showIslemPopup(
                     );
                   } else if (state is CariHesapNakitTahsilatDetailesLoaded) {
                     if (state.NakitTahsilatDetails.isEmpty) {
-                      return Center(child: Text("No data available"));
+                      return Center(child: Text("Gösterilecek bilgi bulunmamaktadır." ,
+                      style: TextStyle(color: Colors.white),));
                     }
                     return SizedBox(
                       height: 300.0,
@@ -515,7 +518,8 @@ void _showIslemPopup(
                     );
                   } else if (state is CariHesapGelenHavaleDetailesLoaded) {
                     if (state.GelenHavaleDetails.isEmpty) {
-                      return Center(child: Text("No data available"));
+                      return Center(child: Text("Gösterilecek bilgi bulunmamaktadır." ,
+                      style: TextStyle(color: Colors.white),));
                     }
                     return SizedBox(
                       height: 300.0,
@@ -558,7 +562,8 @@ void _showIslemPopup(
                     );
                   } else if (state is CariHesapAlinanHizmetDetailesLoaded) {
                     if (state.HizmetFaturasiDetails.isEmpty) {
-                      return Center(child: Text("No data available"));
+                      return Center(child:Text("Gösterilecek bilgi bulunmamaktadır." ,
+                      style: TextStyle(color: Colors.white),));
                     }
                     return SizedBox(
                       height: 300.0,
@@ -601,7 +606,8 @@ void _showIslemPopup(
                     );
                   } else if (state is CariHesapCekVeSenetDetailesLoaded) {
                     if (state.CekVeSenetDetails.isEmpty) {
-                      return Center(child: Text("No data available"));
+                      return Center(child: Text("Gösterilecek bilgi bulunmamaktadır." ,
+                      style: TextStyle(color: Colors.white),));
                     }
                     return SizedBox(
                       height: 300.0,
@@ -637,7 +643,8 @@ void _showIslemPopup(
                     );
                   } else if (state is CariHesapKrediKartDetailesLoaded) {
                     if (state.KrediKartiDetails.isEmpty) {
-                      return Center(child: Text("No data available"));
+                      return Center(child: Text("Gösterilecek bilgi bulunmamaktadır." ,
+                      style: TextStyle(color: Colors.white),));
                     }
                     return SizedBox(
                       height: 300.0,
@@ -680,7 +687,8 @@ void _showIslemPopup(
                     );
                   } else if (state is CariHesapDefaultDetailesLoaded) {
                     if (state.DefaultCaseDetails.isEmpty) {
-                      return Center(child: Text("No data available"));
+                      return Center(child: Text("Gösterilecek bilgi bulunmamaktadır." ,
+                      style: TextStyle(color: Colors.white),));
                     }
                     return SizedBox(
                       height: 300.0,
@@ -725,7 +733,8 @@ void _showIslemPopup(
                       ),
                     );
                   } else {
-                    return Text("No data available");
+                    return Text("Gösterilecek bilgi bulunmamaktadır." ,
+                      style: TextStyle(color: Colors.white),);
                   }
                 },
               ),

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:excel/excel.dart';
 import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/bloc/bloc/cekvesenet_bloc.dart';
@@ -80,7 +79,6 @@ class _CekVeSenetPageState extends State<CekVeSenetPage> {
         icon: Icon(Icons.file_download, color: Colors.white),
         onPressed: isLoaded
             ? () {
-                  print(filteredCekler.length.toString());
                   _exportToExcelWithStyles(filteredCekler);
                 
               }
@@ -351,10 +349,7 @@ class _CekVeSenetPageState extends State<CekVeSenetPage> {
           (_startDate == null || cekDate.isAfter(_startDate!)) &&
           (_endDate == null || cekDate.isBefore(_endDate!));
 
-      // Debugging prints for date match
-      print('Borçlu match: $matchBorclu, Date match: $matchDate');
 
-      // Include only if both Borçlu and date match
       return matchBorclu && matchDate;
     }).toList();
   }
@@ -427,16 +422,6 @@ class _CekVeSenetPageState extends State<CekVeSenetPage> {
     ..createSync(recursive: true)
     ..writeAsBytesSync(excel.encode()!);
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Excel dosyası oluşturuldu: $filePath'),
-      action: SnackBarAction(
-        label: 'Aç',
-        onPressed: () {
-          OpenFile.open(filePath);
-        },
-      ),
-    ),
-  );
+   OpenFile.open(filePath);
 }
 }

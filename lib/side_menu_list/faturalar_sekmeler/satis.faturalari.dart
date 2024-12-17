@@ -98,7 +98,6 @@ class _SatisFaturalarPageState extends State<SatisFaturalarPage> {
     _resetFilters();
     final state = context.read<AlinanFaturalarBloc>().state;
     if (state is SatisFaturalarLoadSuccess) {
-      print(filteredSatisFaturalar.length);
       _exportToExcelWithStyles(filteredSatisFaturalar);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -457,16 +456,6 @@ class _SatisFaturalarPageState extends State<SatisFaturalarPage> {
     ..createSync(recursive: true)
     ..writeAsBytesSync(excel.encode()!);
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Excel dosyası oluşturuldu: $filePath'),
-      action: SnackBarAction(
-        label: 'Aç',
-        onPressed: () {
-          OpenFile.open(filePath);
-        },
-      ),
-    ),
-  );
+   OpenFile.open(filePath);
 }
 }

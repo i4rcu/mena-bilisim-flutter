@@ -18,7 +18,7 @@ class ApiHandler {
     final prefs = await SharedPreferences.getInstance();
     final ipAddress =
         prefs.getString('ipAddress') ?? "http://95.70.188.118:9090/api";
-    baseUri = "http://$ipAddress:9090/api";
+    baseUri = "http://$ipAddress/api";
   }
 
   Future<List<Firma>> getUserData() async {
@@ -78,7 +78,6 @@ class ApiHandler {
   Future<Kullanici?> fetchUser(String username, String password) async {
     await _ensureBaseUriLoaded();
     final uri = Uri.parse('$baseUri/lisanslar/login');
-    print(uri);
     try {
       final response = await http.post(
         uri,
@@ -94,7 +93,6 @@ class ApiHandler {
       }
     } catch (e) {
       print("Error fetching user: $e");
-      print(password);
       return null;
     }
   }
@@ -524,7 +522,6 @@ Future<List<EnCokSatilanCariler>> fetchEnCokSatilanCariHesaplar(String? tablePre
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body);
-        print(jsonResponse.length);
         return jsonResponse.map((data) => AlinanFatura.fromJson(data)).toList();
       } else {
         throw Exception('Failed to load banka hesap details');
@@ -589,7 +586,6 @@ Future<List<EnCokSatilanCariler>> fetchEnCokSatilanCariHesaplar(String? tablePre
 
           if (response.statusCode == 200) {
             List jsonResponse = json.decode(response.body);
-            print(jsonResponse.length);
             // Add the fetched Cek objects to the allCeks list
             allCeks.addAll(
                 jsonResponse.map((data) => Cek.fromJson(data)).toList());
@@ -673,7 +669,6 @@ Future<List<EnCokSatilanCariler>> fetchEnCokSatilanCariHesaplar(String? tablePre
   }
   Future<List<EnCokSatilanMalzeme>> fetchEnCokStailanMal(String? tablePrefix, String? tableSuffix,String? days) async {
   final url = '$baseUri/FirmPeriods/enCokSatilanMalzemeler/$tablePrefix/$tableSuffix/$days';
-  print(url);
   final response = await http.get(Uri.parse(url));
 
   
@@ -810,7 +805,6 @@ Future<List<bool>> Yetkiler(String tablePrefix, int id) async {
       throw Exception('Failed to load YetkiliMenuler: ${response.statusCode}');
     }
   } catch (e) {
-    // Catch any errors and print for debugging purposes
     print('Error occurred: $e');
     throw Exception('Failed to load YetkiliMenuler');
   }
@@ -826,7 +820,6 @@ Future<List<Raporlar>> KullaniciRaporlari(int id) async {
     if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body);
 
-        print(response.body);
         return jsonResponse.map((data) => Raporlar.fromJson(data)).toList();
     } else {
       throw Exception('Failed to load Kullanici Raporlari: ${response.statusCode}');
@@ -882,10 +875,8 @@ Future<List<RaporYetkiler>> RaporYetkileri(int id) async {
     );
 
     if (response.statusCode == 200) {
-      print("User updated successfully.");
       return true;
     } else {
-      print("Failed to update user. Status code: ${response.statusCode}");
       return false;
     }
   } catch (e) {
@@ -910,10 +901,8 @@ Future<bool> UpdateRapor(int id, String raporAdi, String raporSorgusu) async {
     );
 
     if (response.statusCode == 200) {
-      print("User updated successfully.");
       return true;
     } else {
-      print("Failed to update user. Status code: ${response.statusCode}");
       return false;
     }
   } catch (e) {
@@ -930,10 +919,8 @@ Future<bool> DeleteUser(int id) async {
 
 
     if (response.statusCode == 200) {
-      print("User deleted successfully.");
       return true;
     } else {
-      print("Failed to update user. Status code: ${response.statusCode}");
       return false;
     }
   } catch (e) {
@@ -950,11 +937,8 @@ Future<bool> DeleteRapor(int id) async {
 
 
     if (response.statusCode == 200) {
-      print("User deleted successfully.");
       return true;
     } else {
-      print("Failed to update user. Status code: ${response.statusCode}");
-      print("Response body: ${response.body}");
       return false;
     }
   } catch (e) {
@@ -965,7 +949,6 @@ Future<bool> DeleteRapor(int id) async {
 void AddUser( String username, String password, String lisansTarihi, String lisansBitisTarihi,List<bool> menuler) async {
   await _ensureBaseUriLoaded();
   final uri = Uri.parse('$baseUri/lisanslar/addUser');
-  print(uri);
 
   try {
     final response = await http.put(
@@ -983,13 +966,9 @@ void AddUser( String username, String password, String lisansTarihi, String lisa
     );
 
     if (response.statusCode == 200) {
-      print("Response body: ${response.body}");
 
-      print("User Added successfully.");
       return;
     } else {
-      print("Failed to Add user. Status code: ${response.statusCode}");
-      print("Response body: ${response.body}");
       return ;
     }
   } catch (e) {
@@ -1013,12 +992,8 @@ void AddRapor(
     );
 
     if (response.statusCode == 200) {
-      print("Response body: ${response.body}");
-      print("Rapor added successfully.");
       return;
     } else {
-      print("Failed to add rapor. Status code: ${response.statusCode}");
-      print("Response body: ${response.body}");
       return;
     }
   } catch (e) {
@@ -1043,7 +1018,6 @@ void AddRapor(
     );
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body) as List<dynamic>;
-      print(response.body);
       if (jsonData.isEmpty) {
         return [];
       }
@@ -1055,21 +1029,12 @@ void AddRapor(
 
       return result;
     } else {
-      // Return an empty list if the status code is not 200
       return [];
     }
   } catch (e) {
     print(e);
-    // Return an empty list if an exception occurs
     return [];
   }
 }
 
-
-
-
 }
-
-
-/*8QL1kCqODJd8CRif/8uZpw==           8
-ZXEnVV6XpBv2kyhjVAvuhg==           3*/

@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:fitness_dashboard_ui/EncryptionHelper.dart';
 import 'package:fitness_dashboard_ui/admin_seide_menu/kullanicilar_sekme/kullanici_guncelle.dart';
 import 'package:flutter/material.dart';
@@ -26,18 +25,15 @@ class _KullanicilarPageState extends State<KullanicilarPage> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Subscribe to the RouteObserver
   }
 
   @override
   void didPopNext() {
-    // Called when the current route has been popped off, and the current route shows up
     BlocProvider.of<AdminBloc>(context).add(FetchKullanicilar());
   }
 
   @override
   void dispose() {
-    // Unsubscribe from the RouteObserver
     super.dispose();
   }
 
@@ -49,7 +45,8 @@ class _KullanicilarPageState extends State<KullanicilarPage> with RouteAware {
       _sortBy = 'Tarih';
       _isAscending = true;
     });
-    Navigator.pushReplacement(
+    Navigator.pop(context);
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => BlocProvider(
@@ -72,7 +69,7 @@ class _KullanicilarPageState extends State<KullanicilarPage> with RouteAware {
         child: MediaQuery(
           data: MediaQuery.of(context).copyWith(
               textScaler:
-                  TextScaler.linear(0.9)), // Force text scale factor to 1.0
+                  TextScaler.linear(0.9)),
           child: SafeArea(
             child: Scaffold(
               backgroundColor: Color.fromRGBO(35, 55, 69, 10),
@@ -238,7 +235,6 @@ class _KullanicilarPageState extends State<KullanicilarPage> with RouteAware {
               body: BlocListener<AdminBloc, AdminState>(
                 listener: (context, state) {
                   if (state is KullaniciUpdated) {
-                    // Refresh the user list when the user is updated successfully
                     context.read<AdminBloc>().add(FetchKullanicilar());
                     Navigator.pushReplacement(
                       context,
@@ -319,8 +315,10 @@ class _KullanicilarPageState extends State<KullanicilarPage> with RouteAware {
                         int comparisonResult;
 
                         if (_sortBy == 'Tarih') {
-                          DateTime dateA = DateEncryptor().decrypt(a.lisansTarihi!);
-DateTime dateB = DateEncryptor().decrypt(b.lisansTarihi!);
+                          DateTime dateA =
+                              DateEncryptor().decrypt(a.lisansTarihi!);
+                          DateTime dateB =
+                              DateEncryptor().decrypt(b.lisansTarihi!);
                           comparisonResult = dateB.compareTo(dateA);
                         } else {
                           comparisonResult = 0;
@@ -347,7 +345,7 @@ DateTime dateB = DateEncryptor().decrypt(b.lisansTarihi!);
                               color: Color.fromRGBO(45, 65, 80, 50),
                               child: ListTile(
                                 onTap: () async {
-                                  Navigator.of(context).pushReplacement(
+                                  Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => BlocProvider(
                                         create: (context) => AdminBloc(
@@ -357,10 +355,8 @@ DateTime dateB = DateEncryptor().decrypt(b.lisansTarihi!);
                                             BlocConsumer<AdminBloc, AdminState>(
                                           listener: (context, state) {
                                             if (state is YetkilerFetched) {
-                                             Navigator.of(context)
-                                                  .pushReplacement
-                                                  (
-                                                    
+                                              Navigator.of(context)
+                                                  .pushReplacement(
                                                 MaterialPageRoute(
                                                   builder: (_) => BlocProvider(
                                                     create: (context) =>
@@ -369,9 +365,24 @@ DateTime dateB = DateEncryptor().decrypt(b.lisansTarihi!);
                                                       id: cariHesap.id,
                                                       kullanici_ad:
                                                           cariHesap.kullaniciAd,
-                                                      lisans_bitis_tarihi:
-                                                          DateFormat("dd-MM-yyyy").format(DateFormat('yyyy-MM-dd').parse(DateEncryptor().decrypt(cariHesap.lisansBitisTarihi!).toString())).toString(),
-                                                      lisans_tarihi: DateFormat("dd-MM-yyyy").format(DateFormat('yyyy-MM-dd').parse(DateEncryptor().decrypt(cariHesap.lisansTarihi!).toString())).toString(),
+                                                      lisans_bitis_tarihi: DateFormat(
+                                                              "dd-MM-yyyy")
+                                                          .format(DateFormat(
+                                                                  'yyyy-MM-dd')
+                                                              .parse(DateEncryptor()
+                                                                  .decrypt(cariHesap
+                                                                      .lisansBitisTarihi!)
+                                                                  .toString()))
+                                                          .toString(),
+                                                      lisans_tarihi: DateFormat(
+                                                              "dd-MM-yyyy")
+                                                          .format(DateFormat(
+                                                                  'yyyy-MM-dd')
+                                                              .parse(DateEncryptor()
+                                                                  .decrypt(cariHesap
+                                                                      .lisansTarihi!)
+                                                                  .toString()))
+                                                          .toString(),
                                                       sifre: cariHesap.sifre,
                                                       yetkiler:
                                                           state.checkboxes,
@@ -420,13 +431,25 @@ DateTime dateB = DateEncryptor().decrypt(b.lisansTarihi!);
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15),
                                     ),
-                                    
-Text(
-  
-      DateFormat("dd-MM-yyyy").format(DateFormat('yyyy-MM-dd').parse(DateEncryptor().decrypt(cariHesap.lisansTarihi!).toString())).toString()  + " - " +
-      DateFormat("dd-MM-yyyy").format(DateFormat('yyyy-MM-dd').parse(DateEncryptor().decrypt(cariHesap.lisansBitisTarihi!).toString())).toString()  
-,  style: TextStyle(color: Colors.white, fontSize: 15),
-),
+                                    Text(
+                                      DateFormat("dd-MM-yyyy")
+                                              .format(DateFormat('yyyy-MM-dd')
+                                                  .parse(DateEncryptor()
+                                                      .decrypt(cariHesap
+                                                          .lisansTarihi!)
+                                                      .toString()))
+                                              .toString() +
+                                          " - " +
+                                          DateFormat("dd-MM-yyyy")
+                                              .format(DateFormat('yyyy-MM-dd')
+                                                  .parse(DateEncryptor()
+                                                      .decrypt(cariHesap
+                                                          .lisansBitisTarihi!)
+                                                      .toString()))
+                                              .toString(),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 15),
+                                    ),
                                   ],
                                 ),
                                 trailing: BlocProvider(

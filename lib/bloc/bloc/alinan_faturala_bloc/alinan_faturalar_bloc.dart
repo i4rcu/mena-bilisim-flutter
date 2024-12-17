@@ -21,8 +21,8 @@ class AlinanFaturalarBloc
     emit(AlinanFaturaLoading());
     try {
       final faturalar = await apiHandler.fetchAlinanFaturalar(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '');
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01');
 
       emit(AlinanFaturalarLoadSuccess(faturalar));
     } catch (e) {
@@ -36,8 +36,8 @@ class AlinanFaturalarBloc
     emit(SatisFaturaLoading());
     try {
       final faturalar = await apiHandler.fetchSatisFaturalar(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '');
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01');
 
       emit(SatisFaturalarLoadSuccess(faturalar));
     } catch (e) {
@@ -51,15 +51,14 @@ class AlinanFaturalarBloc
     emit(FaturaDetayLoading());
     try {
       final faturalar = await apiHandler.fetchFaturaDetay(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '',
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01',
           event.logicalref,
           event.tur);
 
       emit(FaturaDetayLoadSuccess(faturalar));
     } catch (e) {
-      print(e);
-      emit(FaturaDetayLoadFailure(error: e.toString() + "dsfsdfdf"));
+      emit(FaturaDetayLoadFailure(error: e.toString()));
     }
   }
 }

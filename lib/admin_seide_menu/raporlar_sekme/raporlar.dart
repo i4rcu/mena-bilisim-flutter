@@ -21,7 +21,6 @@ class _RaporlarPageState extends State<RaporlarPage> with RouteAware {
 
   @override
   void didPopNext() {
-    // When navigating back to this page, refetch the reports
     context.read<AdminBloc>().add(FetchRaporlar());
   }
 
@@ -123,7 +122,7 @@ class _RaporlarPageState extends State<RaporlarPage> with RouteAware {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Rapor Başarıyla Silindi.')),
                 );
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => BlocProvider(
@@ -160,7 +159,7 @@ class _RaporlarPageState extends State<RaporlarPage> with RouteAware {
                           color: const Color.fromRGBO(45, 65, 80, 50),
                           child: ListTile(
                             onTap: () {
-                              Navigator.of(this.context).pushReplacement(
+                              Navigator.of(this.context).push(
                                 MaterialPageRoute(
                                   builder: (context) => BlocProvider(
                                     create: (context) => AdminBloc(ApiHandler()),

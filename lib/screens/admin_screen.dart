@@ -44,13 +44,11 @@ class AdminScreen extends StatelessWidget {
             drawer: !isDesktop
                 ? const SizedBox(
                     width: 250,
-                    //child: AdminSideMenuWidget(),
                   )
                 : null,
             endDrawer: Responsive.isMobile(context)
                 ? SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,
-                    //child: const SummaryWidget(),
                   )
                 : null,
             body: SafeArea(

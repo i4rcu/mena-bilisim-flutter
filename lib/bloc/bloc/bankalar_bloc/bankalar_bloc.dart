@@ -18,11 +18,9 @@ class BankalarBloc extends Bloc<BankalarEvent, BankalarState> {
     final prefs = await SharedPreferences.getInstance();
     emit(BankalarLoading());
     try {
-      print(prefs.getString('selectedFirma') ?? '');
-      print(prefs.getString('selectedDonem') ?? '');
       final cariHesaplar = await apiHandler.fetchBankaHesapDetails(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '');
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01');
       emit(BankalarLoaded(cariHesaplar));
     } catch (e) {
       emit(BankalarError(e.toString()));

@@ -54,7 +54,7 @@ class RaporEkleKart extends StatelessWidget {
     return Flexible( // Use Flexible instead of Expanded
       fit: FlexFit.tight, // Allow it to take only the space it needs
       child: GestureDetector(
-        onTap: () => Navigator.of(context).pushReplacement(
+        onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => BlocProvider(
               create: (context) => AdminBloc(ApiHandler()),

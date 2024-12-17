@@ -54,7 +54,6 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
                   onPressed: () {
                     final state = context.read<CariHesapBloc>().state;
                     if (state is CariHesapLoaded) {
-                      print(filteredCariHesaplar.length);
                       _exportToExcelWithStyles(filteredCariHesaplar);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(

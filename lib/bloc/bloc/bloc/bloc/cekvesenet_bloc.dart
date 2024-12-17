@@ -18,8 +18,8 @@ class CekvesenetBloc extends Bloc<CekvesenetEvent, CekvesenetState> {
     emit(CekVeSenetLoading());
     try {
       final faturalar = await apiHandler.fetchCeks(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '',
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01',
           event.raportur);
 
       emit(CekVeSenetLoadaed(Cekler: faturalar));

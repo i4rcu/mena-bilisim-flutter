@@ -23,8 +23,8 @@ void _fetchEncokSatilanCairler(
     emit(EnCokSatilanCarilerLoading());
     try {
       final EnCokSatilancariHesaplar = await apiHandler.fetchEnCokSatilanCariHesaplar(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '',
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01',
           event.days);
       emit(EnCokSatilanCarilerLoaded(EnCokSatilancariHesaplar));
     } catch (e) {
@@ -38,8 +38,8 @@ void _fetchEncokSatilanCairler(
     try {
      
       final cariHesaplar = await apiHandler.fetchCariHesaplar(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '');
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01');
       emit(CariHesapLoaded(cariHesaplar));
     } catch (e) {
       emit(CariHesapError(e.toString()));
@@ -53,16 +53,15 @@ void _fetchEncokSatilanCairler(
     try {
      
       final cariHesapDetails = await apiHandler.fetchCariHesapDetails(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '',
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01',
           event.clientNo);
        final cariHesaplar = await apiHandler.fetchCariHesaplar(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '');
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01');
       emit(CariHesapDetailesLoaded(cariHesapDetails,cariHesaplar));
     } catch (e) {
-      emit(CariHesapError(e.toString() + "asdasd"));
-      print(e);
+      emit(CariHesapError(e.toString() ));
     }
   }
 
@@ -75,8 +74,8 @@ void _fetchEncokSatilanCairler(
       if (event.trcode == "Virman Fişi") {
   
         final cariHesapDetails = await apiHandler.fetchVirmanFisiDetails(
-            prefs.getString('selectedFirma') ?? '',
-            prefs.getString('selectedDonem') ?? '',
+            prefs.getString('selectedFirma') ?? '001',
+            prefs.getString('selectedDonem') ?? '01',
             event.trcode,
             event.invoice,
             event.tranno,
@@ -87,8 +86,8 @@ void _fetchEncokSatilanCairler(
           event.trcode == "Alacak Dekontu") {
 
         final cariHesapDetails = await apiHandler.fetchBorcDekontuDetails(
-            prefs.getString('selectedFirma') ?? '',
-            prefs.getString('selectedDonem') ?? '',
+            prefs.getString('selectedFirma') ?? '001',
+            prefs.getString('selectedDonem') ?? '01',
             event.trcode,
             event.invoice,
             event.tranno,
@@ -99,8 +98,8 @@ void _fetchEncokSatilanCairler(
           event.trcode == "Nakit Ödeme") {
         
         final cariHesapDetails = await apiHandler.fetchNakitTahsilatDetails(
-            prefs.getString('selectedFirma') ?? '',
-            prefs.getString('selectedDonem') ?? '',
+            prefs.getString('selectedFirma') ?? '001',
+            prefs.getString('selectedDonem') ?? '01',
             event.trcode,
             event.invoice,
             event.tranno,
@@ -112,8 +111,8 @@ void _fetchEncokSatilanCairler(
           event.trcode == "Gönderilen Havale") {
        
         final cariHesapDetails = await apiHandler.fetchGelenHavaleDetails(
-            prefs.getString('selectedFirma') ?? '',
-            prefs.getString('selectedDonem') ?? '',
+            prefs.getString('selectedFirma') ?? '001',
+            prefs.getString('selectedDonem') ?? '01',
             event.trcode,
             event.invoice,
             event.tranno,
@@ -124,8 +123,8 @@ void _fetchEncokSatilanCairler(
           event.trcode == "Verilen Hizmet Faturası") {
        
         final cariHesapDetails = await apiHandler.fetchHizmetFaturasiDetails(
-            prefs.getString('selectedFirma') ?? '',
-            prefs.getString('selectedDonem') ?? '',
+            prefs.getString('selectedFirma') ?? '001',
+            prefs.getString('selectedDonem') ?? '01',
             event.trcode,
             event.invoice,
             event.tranno,
@@ -138,8 +137,8 @@ void _fetchEncokSatilanCairler(
           event.trcode == "Senet Çıkışı (Cari Hesaba)") {
        
         final cariHesapDetails = await apiHandler.fetchCekDetails(
-            prefs.getString('selectedFirma') ?? '',
-            prefs.getString('selectedDonem') ?? '',
+            prefs.getString('selectedFirma') ?? '001',
+            prefs.getString('selectedDonem') ?? '01',
             event.trcode,
             event.invoice,
             event.tranno,
@@ -150,8 +149,8 @@ void _fetchEncokSatilanCairler(
           event.trcode == "Firma Kredi Kartı Fişi") {
        
         final cariHesapDetails = await apiHandler.fetchKrediKartDetails(
-            prefs.getString('selectedFirma') ?? '',
-            prefs.getString('selectedDonem') ?? '',
+            prefs.getString('selectedFirma') ?? '001',
+            prefs.getString('selectedDonem') ?? '01',
             event.trcode,
             event.invoice,
             event.tranno,
@@ -161,8 +160,8 @@ void _fetchEncokSatilanCairler(
       } else {
         
         final cariHesapDetails = await apiHandler.fetchdefaultDetails(
-            prefs.getString('selectedFirma') ?? '',
-            prefs.getString('selectedDonem') ?? '',
+            prefs.getString('selectedFirma') ?? '001',
+            prefs.getString('selectedDonem') ?? '01',
             event.trcode,
             event.invoice,
             event.tranno,
@@ -171,8 +170,7 @@ void _fetchEncokSatilanCairler(
         return;
       }
     } catch (e) {
-      emit(CariHesapError(e.toString() + "asdasd"));
-      print(e);
+      emit(CariHesapError(e.toString() ));
     }
   }
 }

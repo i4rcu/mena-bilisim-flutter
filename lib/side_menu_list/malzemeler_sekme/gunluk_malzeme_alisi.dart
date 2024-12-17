@@ -264,16 +264,6 @@ class _GunlukMalzemeAlisiListPageState extends State<GunlukMalzemeAlisiListPage>
     ..createSync(recursive: true)
     ..writeAsBytesSync(excel.encode()!);
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Excel dosyası oluşturuldu: $filePath'),
-      action: SnackBarAction(
-        label: 'Aç',
-        onPressed: () {
-          OpenFile.open(filePath);
-        },
-      ),
-    ),
-  );
+   OpenFile.open(filePath);
 }
 }

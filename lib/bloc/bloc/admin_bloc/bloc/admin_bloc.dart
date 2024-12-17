@@ -11,9 +11,10 @@ part 'admin_event.dart';
 part 'admin_state.dart';
 
 class AdminBloc extends Bloc<AdminEvent, AdminState> {
+    
     final ApiHandler apiHandler;
 
-
+    
   AdminBloc(this.apiHandler) : super(AdminInitial()) {
     on<FetchKullanicilar>(_onLoadKullanicilar);
     on<AddKullanici>(_onAddKullanici);
@@ -27,7 +28,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<FetchKullaniciRaporlari>(_onFetchKullaniciRaporlar);
     
 
-  }
+  } 
+  
   void _onFetchKullaniciRaporlar(
       FetchKullaniciRaporlari event, Emitter<AdminState> emit) async {
     emit(KullaniciRaporFetching());
@@ -44,9 +46,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     emit(RaporlarFetching());
     try {
       final faturalar = await apiHandler.TumRaporlar(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '');
-          print(faturalar);
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01');
       emit(RaporlarFetched(faturalar));
     } catch (e) {
       emit(RaporlarFetchingError(e.toString()));
@@ -58,10 +59,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     emit(YetkilerFetching());
     try {
       final faturalar = await apiHandler.Yetkiler(
-          prefs.getString('selectedFirma') ?? '',
+          prefs.getString('selectedFirma') ?? '001',
           event.id);
       final raporlar = await apiHandler.RaporYetkileri(event.id);
-          print(raporlar);
       emit(YetkilerFetched(faturalar,raporlar));
     } catch (e) {
       emit(YetkilerFetchingError(e.toString()));
@@ -73,9 +73,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     emit(KullanicilarLoading());
     try {
       final faturalar = await apiHandler.Tumkullanicilar(
-          prefs.getString('selectedFirma') ?? '',
-          prefs.getString('selectedDonem') ?? '');
-          print(faturalar);
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01');
       emit(KullanicilarLoaded(faturalar));
     } catch (e) {
       emit(KullanicilarError(e.toString()));
@@ -135,7 +134,6 @@ void _onDeleteKullanici(DeleteKullanici event, Emitter<AdminState> emit) async {
     );
 
     if (isDeleted) {
-      print(isDeleted);
       emit(KullaniciDeleted(true));
     } else {
       emit(KullaniciDeleteError("Failed to update user."));
@@ -154,7 +152,6 @@ void _onDeleteRapor(DeleteRapor event, Emitter<AdminState> emit) async {
     );
 
     if (isDeleted) {
-      print(isDeleted);
       emit(RaporDeleted(true));
     } else {
       emit(RaporDeleteError("Failed to update user."));
@@ -168,7 +165,6 @@ void _onDeleteRapor(DeleteRapor event, Emitter<AdminState> emit) async {
 
 void _onAddKullanici(AddKullanici event, Emitter<AdminState> emit) async {
   emit(KullaniciAdding()); 
-  print(event.checkboxes);
   try {
 
     // Update user details

@@ -56,7 +56,6 @@ class _LoginPageState extends State<LoginPage> {
           listener: (context, state) {
             if (state is LoginSuccess) {
               UserSession().userId = state.userId;
-              print("This is kullanici vasfi: " + state.kullanici_vasfi);
               _saveUserData();
               if (state.kullanici_vasfi == "User") {
                 Navigator.pushReplacement(

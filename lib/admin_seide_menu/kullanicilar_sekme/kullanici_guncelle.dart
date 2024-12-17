@@ -36,7 +36,6 @@ class _KullaniciGuncelleState extends State<KullaniciGuncelle> {
   late TextEditingController _lisansTarihiController;
   late TextEditingController _lisansBitisTarihiController;
 
-  // Separate options for menus and reports
   List<String> _menuCheckboxOptions = [
     'Dashboard',
     'Cari Hesap',
@@ -246,58 +245,58 @@ class _KullaniciGuncelleState extends State<KullaniciGuncelle> {
                                 backgroundColor: WidgetStateProperty.all(
                                     Color.fromRGBO(241, 108, 39, 1))),
                             onPressed: () {
-  if (_validateInputs()) {
-    try {
-      // Parse the dates from the text fields
-      DateTime lisansTarihi = DateFormat('dd/MM/yyyy').parse(_lisansTarihiController.text);
-      DateTime lisansBitisTarihi = DateFormat('dd/MM/yyyy').parse(_lisansBitisTarihiController.text);
-
-      // Format the dates to "yyyy-MM-dd"
-      String formattedLisansTarihi = DateFormat('yyyy-MM-dd').format(lisansTarihi);
-      String formattedLisansBitisTarihi = DateFormat('yyyy-MM-dd').format(lisansBitisTarihi);
-
-      // Encrypt the formatted dates
-      String encryptedLisansTarihi = DateEncryptor().encrypt(lisansTarihi);
-      String encryptedLisansBitisTarihi = DateEncryptor().encrypt(lisansBitisTarihi);
-
-      // Prepare the list of updated RaporYetkiler
-      List<RaporYetkiler> updatedRaporYetkileri = widget.rapor_yetkileri!
-          .asMap()
-          .entries
-          .map((entry) {
-        int index = entry.key;
-        RaporYetkiler rapor = entry.value;
-        rapor.yetki = _raporCheckboxValues[index] ? 1 : 0;
-        return rapor;
-      }).toList();
-
-      // Call the UpdateKullanici event with the updated data
-      context.read<AdminBloc>().add(UpdateKullanici(
-            widget.id!,
-            _kullaniciAdController.text,
-            EncryptionHelper.encryptPassword(_sifreController.text),
-            encryptedLisansTarihi,
-            encryptedLisansBitisTarihi,
-            _menuCheckboxValues,
-            updatedRaporYetkileri,
-          ));
-
-      // Navigate back to the Kullanıcılar page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (_) => AdminBloc(ApiHandler())..add(FetchKullanicilar()),
-            child: KullanicilarPage(),
-          ),
-        ),
-      );
-    } catch (e) {
-      _showErrorDialog('Tarihleri doğru formatta girin: dd/MM/yyyy');
-    }
-  }
-},)
-
+                              if (_validateInputs()) {
+                                try {
+                                  DateTime lisansTarihi =
+                                      DateFormat('dd/MM/yyyy')
+                                          .parse(_lisansTarihiController.text);
+                                  DateTime lisansBitisTarihi =
+                                      DateFormat('dd/MM/yyyy').parse(
+                                          _lisansBitisTarihiController.text);
+                                  String encryptedLisansTarihi =
+                                      DateEncryptor().encrypt(lisansTarihi);
+                                  String encryptedLisansBitisTarihi =
+                                      DateEncryptor()
+                                          .encrypt(lisansBitisTarihi);
+                                  List<RaporYetkiler> updatedRaporYetkileri =
+                                      widget.rapor_yetkileri!
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                    int index = entry.key;
+                                    RaporYetkiler rapor = entry.value;
+                                    rapor.yetki =
+                                        _raporCheckboxValues[index] ? 1 : 0;
+                                    return rapor;
+                                  }).toList();
+                                  context.read<AdminBloc>().add(UpdateKullanici(
+                                        widget.id!,
+                                        _kullaniciAdController.text,
+                                        EncryptionHelper.encryptPassword(
+                                            _sifreController.text),
+                                        encryptedLisansTarihi,
+                                        encryptedLisansBitisTarihi,
+                                        _menuCheckboxValues,
+                                        updatedRaporYetkileri,
+                                      ));
+                                  Navigator.pop(context);
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BlocProvider(
+                                        create: (_) => AdminBloc(ApiHandler())
+                                          ..add(FetchKullanicilar()),
+                                        child: KullanicilarPage(),
+                                      ),
+                                    ),
+                                  );
+                                } catch (e) {
+                                  _showErrorDialog(
+                                      'Tarihleri doğru formatta girin: dd/MM/yyyy');
+                                }
+                              }
+                            },
+                          )
                         ],
                       ),
                     ),

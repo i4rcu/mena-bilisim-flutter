@@ -53,11 +53,10 @@ class _BankalarListPageState extends State<BankalarListPage> {
         icon: Icon(Icons.file_download, color: Colors.white),
         onPressed: isLoaded
             ? () {
-                  print(filteredCariHesaplar.length.toString());
                   _exportToExcelWithStyles(filteredCariHesaplar);
                 
               }
-            : (){print("ssssssssssssssssssssssssssssssssssssssssssssssssssssss");}, // Disable the button
+            : (){;}, // Disable the button
       );
     },
   ),
@@ -174,13 +173,11 @@ class _BankalarListPageState extends State<BankalarListPage> {
     void _exportToExcelWithStyles(List<Banka> faturalar) async {
   var excel = Excel.createExcel();
 
-  // Rename the default sheet
   String defaultSheet = excel.getDefaultSheet()!;
   excel.rename(defaultSheet, 'Bankalar');
 
   Sheet? sheetObject = excel['Bankalar'];
 
-  // Define a custom style for headers
   CellStyle headerStyle = CellStyle(
     fontFamily: getFontFamily(FontFamily.Calibri),
     bold: true,
@@ -233,16 +230,6 @@ class _BankalarListPageState extends State<BankalarListPage> {
     ..createSync(recursive: true)
     ..writeAsBytesSync(excel.encode()!);
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Excel dosyası oluşturuldu: $filePath'),
-      action: SnackBarAction(
-        label: 'Aç',
-        onPressed: () {
-          OpenFile.open(filePath);
-        },
-      ),
-    ),
-  );
+   OpenFile.open(filePath);
 }
 }
