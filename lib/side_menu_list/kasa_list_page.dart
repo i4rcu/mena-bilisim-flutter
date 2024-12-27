@@ -3,9 +3,8 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:fitness_dashboard_ui/apihandler/model.dart';
-import 'package:fitness_dashboard_ui/bloc/bloc/bankalar_bloc/bankalar_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/bloc/kasalar_bloc.dart';
-import 'package:fitness_dashboard_ui/side_menu_list/bankalar_sekme/banka_detay.dart';
+import 'package:fitness_dashboard_ui/side_menu_list/kasa_detay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,20 +15,20 @@ import 'package:pdf/pdf.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-class BankalarListPage extends StatefulWidget {
+class KasalarListPage extends StatefulWidget {
   @override
-  _BankalarListPageState createState() => _BankalarListPageState();
+  _KasalarListPageState createState() => _KasalarListPageState();
 }
 
-class _BankalarListPageState extends State<BankalarListPage> {
+class _KasalarListPageState extends State<KasalarListPage> {
   String _searchQuery = '';
   final formatter1 = NumberFormat('#,##0.00', 'tr_TR');
-  late List<Banka> filteredkasalar;
+  late List<KasaDto> filteredkasalar;
 
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<BankalarBloc>(context).add(FetchBankalar());
+    BlocProvider.of<kasalarBloc>(context).add(Fetchkasalar());
   }
 
   @override
@@ -45,7 +44,7 @@ class _BankalarListPageState extends State<BankalarListPage> {
               iconTheme: IconThemeData(color: Colors.white),
               backgroundColor: Color.fromRGBO(34, 54, 69, 20),
               title: Text(
-                'Bankalar',
+                'Kasalar',
                 style: TextStyle(color: Colors.white),
               ),
               actions: [
@@ -106,23 +105,23 @@ class _BankalarListPageState extends State<BankalarListPage> {
             ),
             body: BlocProvider(
               create: (context) =>
-                  BankalarBloc(ApiHandler())..add(FetchBankalar()),
-              child: BlocBuilder<BankalarBloc, BankalarState>(
+                  kasalarBloc(ApiHandler())..add(Fetchkasalar()),
+              child: BlocBuilder<kasalarBloc, kasalarState>(
                 builder: (context, state) {
-                  if (state is BankalarInitial) {
+                  if (state is kasalarInitial) {
                     return Center(child: Text('Listelenecek kayıt yok'));
-                  } else if (state is BankalarLoading) {
+                  } else if (state is kasalarLoading) {
                     return Center(child: CircularProgressIndicator());
-                  } else if (state is BankalarLoaded) {
-                    filteredkasalar = state.Bankalar.where((kasa) {
-                      return kasa.banka!.toLowerCase().contains(_searchQuery) ||
-                          kasa.hesap!.toLowerCase().contains(_searchQuery);
+                  } else if (state is kasalarLoaded) {
+                    filteredkasalar = state.kasalar.where((kasa) {
+                      return kasa.name.toLowerCase().contains(_searchQuery) ||
+                          kasa.code.toLowerCase().contains(_searchQuery);
                     }).toList();
                     return ListView.builder(
                       itemCount: filteredkasalar.length,
                       itemBuilder: (context, index) {
                         final kasa = filteredkasalar[index];
-                        final isNegative = kasa.bakiye! < 0;
+                        final isNegative = kasa.bakiye < 0;
                         return Card(
                           color: Color.fromRGBO(45, 65, 80, 50),
                           margin:
@@ -138,14 +137,14 @@ class _BankalarListPageState extends State<BankalarListPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  kasa.hesap!,
+                                  kasa.name,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
                                       color: Colors.white),
                                 ),
                                 Text(
-                                  kasa.banka!,
+                                  kasa.code,
                                   style: TextStyle(
                                     color: Colors.grey[300],
                                     fontSize: 15,
@@ -170,20 +169,29 @@ class _BankalarListPageState extends State<BankalarListPage> {
                                 IconButton(
                                   icon: Icon(Icons.share, color: Colors.white),
                                   onPressed: () {
+                                    MaterialPageRoute(
+            builder: (_) => BlocProvider(
+              create: (context) => kasalarBloc(ApiHandler()),
+              child: KasalarListPage(),
+            ),
+          );
                                     // Dispatch event to fetch details
-                                    context.read<BankalarBloc>().add(
-                                        FetchBankaDetaylari( kasa.logicalref!));
+                                    context.read<kasalarBloc>().add(
+                                        Fetchkasadetaylari(kasa.logicalRef));
 
                                     // Listen for state changes
                                     context
-                                        .read<BankalarBloc>()
+                                        .read<kasalarBloc>()
                                         .stream
                                         .listen((state) {
-                                      if (state is BankaDetaylarLoaded) {
+                                      if (state is kasadetayLoaded) {
+                                         
                                         // Generate and share the PDF once details are loaded
                                         _generateAndSharePdf(
-                                            kasa, state.BankaDetaylar);
-                                      } else if (state is BankaDetaylarError) {
+                                            kasa, state.kasadetaylar);
+                                           
+        
+                                      } else if (state is kasadetayError) {
                                         // Handle error state
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
@@ -201,8 +209,8 @@ class _BankalarListPageState extends State<BankalarListPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => BankaDetayPage(
-                                      logicalref: kasa.logicalref!),
+                                  builder: (context) => KasaDetayPage(
+                                      logicalref: kasa.logicalRef),
                                 ),
                               );
                             },
@@ -210,16 +218,16 @@ class _BankalarListPageState extends State<BankalarListPage> {
                         );
                       },
                     );
-                  }else if(state is BankaDetaylarLoaded){
-                    filteredkasalar = state.Bankalar.where((kasa) {
-                      return kasa.banka!.toLowerCase().contains(_searchQuery) ||
-                          kasa.hesap!.toLowerCase().contains(_searchQuery);
+                  }else if (state is kasadetayLoaded){
+                      filteredkasalar = state.kasa.where((kasa) {
+                      return kasa.name.toLowerCase().contains(_searchQuery) ||
+                          kasa.code.toLowerCase().contains(_searchQuery);
                     }).toList();
                     return ListView.builder(
                       itemCount: filteredkasalar.length,
                       itemBuilder: (context, index) {
                         final kasa = filteredkasalar[index];
-                        final isNegative = kasa.bakiye! < 0;
+                        final isNegative = kasa.bakiye < 0;
                         return Card(
                           color: Color.fromRGBO(45, 65, 80, 50),
                           margin:
@@ -235,14 +243,14 @@ class _BankalarListPageState extends State<BankalarListPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  kasa.hesap!,
+                                  kasa.name,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
                                       color: Colors.white),
                                 ),
                                 Text(
-                                  kasa.banka!,
+                                  kasa.code,
                                   style: TextStyle(
                                     color: Colors.grey[300],
                                     fontSize: 15,
@@ -267,20 +275,29 @@ class _BankalarListPageState extends State<BankalarListPage> {
                                 IconButton(
                                   icon: Icon(Icons.share, color: Colors.white),
                                   onPressed: () {
+                                    MaterialPageRoute(
+            builder: (_) => BlocProvider(
+              create: (context) => kasalarBloc(ApiHandler()),
+              child: KasalarListPage(),
+            ),
+          );
                                     // Dispatch event to fetch details
-                                    context.read<BankalarBloc>().add(
-                                        FetchBankaDetaylari( kasa.logicalref!));
+                                    context.read<kasalarBloc>().add(
+                                        Fetchkasadetaylari(kasa.logicalRef));
 
                                     // Listen for state changes
                                     context
-                                        .read<BankalarBloc>()
+                                        .read<kasalarBloc>()
                                         .stream
                                         .listen((state) {
-                                      if (state is BankaDetaylarLoaded) {
+                                      if (state is kasadetayLoaded) {
+                                         
                                         // Generate and share the PDF once details are loaded
                                         _generateAndSharePdf(
-                                            kasa, state.BankaDetaylar);
-                                      } else if (state is BankaDetaylarError) {
+                                            kasa, state.kasadetaylar);
+                                           
+        
+                                      } else if (state is kasadetayError) {
                                         // Handle error state
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
@@ -298,8 +315,8 @@ class _BankalarListPageState extends State<BankalarListPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => BankaDetayPage(
-                                      logicalref: kasa.logicalref!),
+                                  builder: (context) => KasaDetayPage(
+                                      logicalref: kasa.logicalRef),
                                 ),
                               );
                             },
@@ -307,8 +324,7 @@ class _BankalarListPageState extends State<BankalarListPage> {
                         );
                       },
                     );
-
-                  } else if (state is BankalarError) {
+                  } else if (state is kasalarError) {
                     return Center(child: Text('Error: ${state.message}'));
                   }
                   return Container();
@@ -319,7 +335,7 @@ class _BankalarListPageState extends State<BankalarListPage> {
         ));
   }
 
-  void _exportToExcelWithStyles(List<Banka> faturalar) async {
+  void _exportToExcelWithStyles(List<KasaDto> faturalar) async {
     var excel = Excel.createExcel();
 
     String defaultSheet = excel.getDefaultSheet()!;
@@ -338,8 +354,8 @@ class _BankalarListPageState extends State<BankalarListPage> {
         textWrapping: TextWrapping.WrapText);
 
     sheetObject.appendRow([
-      TextCellValue('Banka Adı'),
-      TextCellValue('Hesap Adı'),
+      TextCellValue('Cari Hesap'),
+      TextCellValue('Kodu'),
       TextCellValue('Bakiyesi (TL)'),
     ]);
 
@@ -352,8 +368,8 @@ class _BankalarListPageState extends State<BankalarListPage> {
     // Add data rows
     for (var fatura in faturalar) {
       sheetObject.appendRow([
-        TextCellValue(fatura.banka!),
-        TextCellValue(fatura.hesap!),
+        TextCellValue(fatura.name),
+        TextCellValue(fatura.code),
         TextCellValue(fatura.bakiye.toString()),
         
       ]);
@@ -368,7 +384,7 @@ class _BankalarListPageState extends State<BankalarListPage> {
 
     // Save the file
     var directory = await getTemporaryDirectory();
-    var filePath = '${directory.path}/BankaDetaylari.xlsx';
+    var filePath = '${directory.path}/KasaDetayları.xlsx';
 
     File(filePath)
       ..createSync(recursive: true)
@@ -377,7 +393,7 @@ class _BankalarListPageState extends State<BankalarListPage> {
   }
 
   void _generateAndSharePdf(
-      Banka kasa, List<BankaDetaylari> details) async {
+      KasaDto kasa, List<KasaDetaylar> details) async {
     final pdf = pw.Document();
 
     final fontData = await rootBundle
@@ -395,7 +411,7 @@ class _BankalarListPageState extends State<BankalarListPage> {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Text('Banka Hareketleri',
+              pw.Text('Kasa Hareketleri',
                   style: pw.TextStyle(
                       fontSize: 24,
                       fontWeight: pw.FontWeight.bold,
@@ -411,10 +427,10 @@ class _BankalarListPageState extends State<BankalarListPage> {
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Text('Banka: ${kasa.banka}',
+                    pw.Text('Kasa: ${kasa.name}',
                         style: pw.TextStyle(
                             fontSize: 16, color: textColor, font: ttf)),
-                    pw.Text('Hesap: ${kasa.hesap}',
+                    pw.Text('Kodu: ${kasa.code}',
                         style: pw.TextStyle(
                             fontSize: 16, color: textColor, font: ttf)),
                    
@@ -440,13 +456,20 @@ class _BankalarListPageState extends State<BankalarListPage> {
                     children: [
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('İşlem',
+                        child: pw.Text('Cari Hesap',
                             style: pw.TextStyle(
                                 fontWeight: pw.FontWeight.bold,
                                 color: PdfColors.white,
                                 font: ttf)),
                       ),
-                      
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('İşlem Türü',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                color: PdfColors.white,
+                                font: ttf)),
+                      ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
                         child: pw.Text('Tarih',
@@ -477,15 +500,20 @@ class _BankalarListPageState extends State<BankalarListPage> {
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(detail.cariHesap!,
+                              style: pw.TextStyle(color: textColor, font: ttf)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
                           child: pw.Text(detail.islem!,
                               style: pw.TextStyle(color: textColor, font: ttf)),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(detail.tarih!,
+                          child: pw.Text(
+                              '${detail.tarih!} ',
                               style: pw.TextStyle(color: textColor, font: ttf)),
                         ),
-                        
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
                           child: pw.Text(
@@ -504,12 +532,12 @@ class _BankalarListPageState extends State<BankalarListPage> {
     );
 
     final output = await getTemporaryDirectory();
-    final file = File("${output.path}/Banka_heasbı_detay.pdf");
+    final file = File("${output.path}/Kasa_detay.pdf");
     await file.writeAsBytes(await pdf.save());
 
     await Share.shareXFiles(
       [XFile(file.path)],
-      text: 'Banka Hesabı Detayları: ${kasa.hesap}',
+      text: 'Kasa Detayları: ${kasa.name}',
     );
   }
 }

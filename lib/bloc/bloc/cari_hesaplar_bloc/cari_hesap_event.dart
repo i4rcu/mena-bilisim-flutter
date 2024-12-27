@@ -34,3 +34,17 @@ class fetchEnCokSatilanCairler extends CariHesapEvent {
   final String? days;
   fetchEnCokSatilanCairler(this.tablePrefix, this.tableSuffix, this.days);
 }
+
+
+class FetchHareketliCariHesaplar extends CariHesapEvent {
+  final String? startDate;
+  final String? endDate;
+
+  FetchHareketliCariHesaplar(this.startDate,this.endDate);
+}
+class FetchHareketsizCariHesaplar extends CariHesapEvent {
+  final String? startDate;
+  final String? endDate;
+
+  FetchHareketsizCariHesaplar(this.startDate,this.endDate);
+}

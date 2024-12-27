@@ -1,10 +1,10 @@
-import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/alinan_faturala_bloc/alinan_faturalar_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/bankalar_bloc/bankalar_bloc.dart';
+import 'package:fitness_dashboard_ui/bloc/bloc/bloc/kasalar_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/cari_hesaplar_bloc/cari_hesap_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/dropdown_bloc/dropdown_event.dart';
 import 'package:fitness_dashboard_ui/util/responsive.dart';
-import 'package:fitness_dashboard_ui/widgets/activity_details_card.dart';
+import 'package:fitness_dashboard_ui/widgets/kasalar_kart.dart';
 import 'package:fitness_dashboard_ui/widgets/alis_faturalari_card.dart';
 import 'package:fitness_dashboard_ui/widgets/bankalar_kart.dart';
 import 'package:fitness_dashboard_ui/widgets/bar_graph_widget.dart';
@@ -41,9 +41,15 @@ class DashboardWidget extends StatelessWidget {
     BlocProvider(
         create: (context) =>
             CariHesapBloc(ApiHandler())..add(FetchCariHesaplar("", ""))),
+             BlocProvider(
+        create: (context) =>
+            kasalarBloc(ApiHandler())..add(Fetchkasalar())),
     BlocProvider(
         create: (context) => CariHesapBloc(ApiHandler())
           ..add(fetchEnCokSatilanCairler("", "", "1"))),
+          BlocProvider(
+        create: (context) => BankalarBloc(ApiHandler())
+          ..add(FetchBankalar())),
   ],
         child: MediaQuery(
           data: MediaQuery.of(context).copyWith(
@@ -72,7 +78,7 @@ class DashboardWidget extends StatelessWidget {
                               Expanded(
                                 flex: 1, // Flexible for desktop
                                 child:
-                                    ActivityDetailsCard(isDesktop: isDesktop),
+                                    kasalarKart(isDesktop: isDesktop),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
@@ -92,7 +98,7 @@ class DashboardWidget extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     flex: 1,
-                                    child: ActivityDetailsCard(
+                                    child: kasalarKart(
                                         isDesktop: isDesktop),
                                   ),
                                   const SizedBox(width: 1),

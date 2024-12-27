@@ -185,7 +185,9 @@ class _CariHesapListPageState extends State<CariHesapListPage> {
                                           .stream
                                           .listen((state) {
                                         if (state is CariHesapDetailesLoaded) {
-                                          // Generate and share the PDF once details are loaded
+                                          // Generate and 
+                                          //
+                                          // the PDF once details are loaded
                                           _generateAndSharePdf(cariHesap,
                                               state.cariHesapDetails);
                                         } else if (state is CariHesapError) {

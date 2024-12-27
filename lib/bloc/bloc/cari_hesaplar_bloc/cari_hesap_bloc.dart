@@ -15,6 +15,39 @@ class CariHesapBloc extends Bloc<CariHesapEvent, CariHesapState> {
     on<FetchCariHesapDetails>(_onFetchCariHesapDetailes);
     on<fetchCariHesapProcessDetails>(_fetchprocess);
     on<fetchEnCokSatilanCairler>(_fetchEncokSatilanCairler);
+    on<FetchHareketliCariHesaplar>(_fetchHareketliCariler);
+    on<FetchHareketsizCariHesaplar>(_fetchHareketsizCariler);
+
+  }
+  void _fetchHareketsizCariler(
+      FetchHareketsizCariHesaplar event, Emitter<CariHesapState> emit) async {
+    final prefs = await SharedPreferences.getInstance();
+    emit(HareketsizCariHesapLoading());
+    try {
+     
+      final cariHesaplar = await apiHandler.fetchHareketsizCariler(
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01',
+          event.startDate!,event.endDate!);
+      emit(HareketsizCariHesapLoaded(cariHesaplar));
+    } catch (e) {
+      emit(HareketsizCariHesapError(e.toString()));
+    }
+  }
+  void _fetchHareketliCariler(
+      FetchHareketliCariHesaplar event, Emitter<CariHesapState> emit) async {
+    final prefs = await SharedPreferences.getInstance();
+    emit(HareketliCariHesapLoading());
+    try {
+     
+      final cariHesaplar = await apiHandler.fetchHareketliCariler(
+          prefs.getString('selectedFirma') ?? '001',
+          prefs.getString('selectedDonem') ?? '01',
+          event.startDate!,event.endDate!);
+      emit(HareketliCariHesapLoaded(cariHesaplar));
+    } catch (e) {
+      emit(HareketliCariHesapError(e.toString()));
+    }
   }
 
 void _fetchEncokSatilanCairler(
@@ -56,6 +89,7 @@ void _fetchEncokSatilanCairler(
           prefs.getString('selectedFirma') ?? '001',
           prefs.getString('selectedDonem') ?? '01',
           event.clientNo);
+      
        final cariHesaplar = await apiHandler.fetchCariHesaplar(
           prefs.getString('selectedFirma') ?? '001',
           prefs.getString('selectedDonem') ?? '01');

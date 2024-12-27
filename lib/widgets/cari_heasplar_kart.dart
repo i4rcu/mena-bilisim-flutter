@@ -4,7 +4,6 @@ import 'package:fitness_dashboard_ui/bloc/bloc/cari_hesaplar_bloc/cari_hesap_blo
 import 'package:fitness_dashboard_ui/side_menu_list/cariler_sekme/cari_hesap_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 class CariHeasplarKart extends StatelessWidget {
   final bool isDesktop;
@@ -102,84 +101,6 @@ class CariHeasplarKart extends StatelessWidget {
     );
   }
 
-  void _showKasaListPopup(BuildContext context, List<CariHesap> cariHesaplar, bool isDesktop) {
-  final formatter = NumberFormat('#,##0.00', 'tr_TR');
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: Color.fromRGBO(36, 64, 72, 50),
-        title: Text(
-          'Cari Hesaplar',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: isDesktop ? 20 : 16, // Larger font size for desktop
-          ),
-        ),
-        content: Container(
-          height: 400,
-          width: double.maxFinite,
-          child: cariHesaplar.isEmpty
-              ? Center(
-                  child: Text(
-                    'Henüz herhangi bir cari hesap bilgisi girilmemiştir.',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: isDesktop ? 18 : 14, // Larger font size for desktop
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: cariHesaplar.length,
-                  itemBuilder: (context, index) {
-                    final hesap = cariHesaplar[index];
-                    final bakiye = hesap.bakiye;
-                    final bakiyeTextColor = bakiye >= 0
-                        ? Colors.green.shade400
-                        : Color.fromARGB(255, 255, 20, 3);
-                    final formattedBakiye = formatter.format(bakiye.abs());
-                    final bakiyeText = bakiye >= 0
-                        ? '$formattedBakiye (B)'
-                        : '$formattedBakiye (A)';
-
-                    return ListTile(
-                      title: Text(
-                        hesap.name,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isDesktop ? 18 : 14, // Larger font size for desktop
-                        ),
-                      ),
-                      subtitle: Text(
-                        'Bakiye: $bakiyeText',
-                        style: TextStyle(
-                          color: bakiyeTextColor,
-                          fontSize: isDesktop ? 16 : 12, // Larger font size for desktop
-                        ),
-                      ),
-                    );
-                  },
-                ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text(
-              'Kapat',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: isDesktop ? 16 : 12, // Larger font size for desktop
-              ),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+  
 
 }

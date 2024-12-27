@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:fitness_dashboard_ui/bloc/bloc/admin_bloc/bloc/admin_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/alinan_faturala_bloc/alinan_faturalar_bloc.dart';
+import 'package:fitness_dashboard_ui/bloc/bloc/bloc/kasalar_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/cari_hesaplar_bloc/cari_hesap_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/malzemeler_bloc/malzemeler_bloc.dart';
 import 'package:fitness_dashboard_ui/httpOverRides.dart';
@@ -39,7 +40,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => MalzemelerBloc(ApiHandler())),
           BlocProvider(create: (context) => CariHesapBloc(ApiHandler())),
           BlocProvider(create: (context) => AlinanFaturalarBloc(ApiHandler())),
-          BlocProvider(create: (context) => AdminBloc(ApiHandler()))
+          BlocProvider(create: (context) => AdminBloc(ApiHandler())),
+          BlocProvider(create: (context) => kasalarBloc(ApiHandler()))
 
         ],
         child: LoginPageOptimized(),

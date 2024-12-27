@@ -1,30 +1,30 @@
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:fitness_dashboard_ui/apihandler/model.dart';
-import 'package:fitness_dashboard_ui/side_menu_list/bankalar_sekme/bankalar_list_page.dart';
+import 'package:fitness_dashboard_ui/bloc/bloc/bloc/kasalar_bloc.dart';
+import 'package:fitness_dashboard_ui/side_menu_list/kasa_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fitness_dashboard_ui/bloc/bloc/bankalar_bloc/bankalar_bloc.dart';
 import 'package:intl/intl.dart';
 
-class BankalarKart extends StatelessWidget {
+class kasalarKart extends StatelessWidget {
   final bool isDesktop;
 
-  const BankalarKart({super.key, required this.isDesktop});
+  const kasalarKart({super.key, required this.isDesktop});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BankalarBloc, BankalarState>(
+    return BlocBuilder<kasalarBloc, kasalarState>(
       builder: (context, state) {
         String totalBakiyeText = 'Yükleniyor..';
-        List<Banka> bankalar = [];
+        List<KasaDto> kasalar = [];
         final formatter1 = NumberFormat('#,##0.00', 'tr_TR');
 
-        if (state is BankalarLoaded) {
+        if (state is kasalarLoaded) {
           totalBakiyeText = formatter1
-              .format(state.Bankalar.fold(0.0, (sum, banka) => sum + banka.bakiye!))
+              .format(state.kasalar.fold(0.0, (sum, banka) => sum + banka.bakiye))
               .toString();
-          bankalar = state.Bankalar;
-        } else if (state is BankalarError) {
+          kasalar = state.kasalar;
+        } else if (state is kasalarError) {
           totalBakiyeText = 'Error: ${state.message}';
         }
 
@@ -38,9 +38,9 @@ class BankalarKart extends StatelessWidget {
                 children: [
                   _buildKasaCard(
                     context,
-                    'Tüm Bankalar',
-                    bankalar,
-                    Color.fromRGBO(59, 180, 115, 20),
+                    'Tüm kasalar',
+                    kasalar,
+                    Color.fromRGBO(241, 108, 39, 20),
                     'Toplam Bakiye: ${totalBakiyeText}',
                     isDesktop,
                   ),
@@ -54,14 +54,14 @@ class BankalarKart extends StatelessWidget {
   }
 
   Widget _buildKasaCard(BuildContext context, String title,
-      List<Banka> bankalar, Color color, String toplam, bool isDesktop) {
+      List<KasaDto> kasalar, Color color, String toplam, bool isDesktop) {
     return Expanded(
       child: GestureDetector(
         onTap: () =>Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => BlocProvider(
-              create: (context) => BankalarBloc(ApiHandler()),
-              child: BankalarListPage(),
+              create: (context) => kasalarBloc(ApiHandler()),
+              child: KasalarListPage(),
             ),
           ),
         ),

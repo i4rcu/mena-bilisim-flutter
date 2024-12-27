@@ -1,15 +1,9 @@
-import 'dart:io';
-
-import 'package:excel/excel.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
-import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/cari_hesaplar_bloc/cari_hesap_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart'; // Add this for date formatting
 
 class CariHesapDetailPage extends StatefulWidget {
   final int logicalref;

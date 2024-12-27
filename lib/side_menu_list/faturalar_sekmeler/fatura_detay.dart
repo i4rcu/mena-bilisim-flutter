@@ -137,160 +137,77 @@ class FaturaDetayDialog extends StatelessWidget {
 
   final headerColor = PdfColor.fromHex('#4CAF50');
   final alternateRowColor = PdfColors.grey300;
-  final textColor = PdfColor.fromHex('#212121');
 
   pdf.addPage(
-    pw.Page(
+    pw.MultiPage(
       pageFormat: PdfPageFormat.a4,
       build: (pw.Context context) {
-        return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text(
-              'Fatura Detayları',
-              style: pw.TextStyle(
-                fontSize: 24,
-                fontWeight: pw.FontWeight.bold,
-                color: headerColor,
-                font: ttf,
+        return [
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                'Fatura Detayları',
+                style: pw.TextStyle(
+                  fontSize: 24,
+                  fontWeight: pw.FontWeight.bold,
+                  color: headerColor,
+                  font: ttf,
+                ),
               ),
-            ),
-            pw.SizedBox(height: 16),
-            // Add the name, trcode, and date in a styled box
-            pw.Container(
-              decoration: pw.BoxDecoration(
-                border: pw.Border.all(color: headerColor, width: 2),
-                borderRadius: pw.BorderRadius.circular(8),
+              pw.SizedBox(height: 16),
+              pw.Text(
+                'Detayları:',
+                style: pw.TextStyle(
+                  fontSize: 18,
+                  fontWeight: pw.FontWeight.bold,
+                  color: headerColor,
+                  font: ttf,
+                ),
               ),
-              padding: const pw.EdgeInsets.all(12),
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
+              pw.SizedBox(height: 8),
+            ],
+          ),
+          pw.Table(
+            border: pw.TableBorder.all(color: headerColor, width: 1),
+            columnWidths: {
+              0: const pw.FlexColumnWidth(3), // "Malzeme Adı" wider
+              1: const pw.FlexColumnWidth(2), // "Birim Fiyatı"
+              2: const pw.FlexColumnWidth(1), // "Adet"
+              3: const pw.FlexColumnWidth(2), // "Toplam Fiyat"
+            },
+            children: [
+              // Table Header Row
+              pw.TableRow(
+                decoration: pw.BoxDecoration(color: headerColor),
                 children: [
-                  pw.Text(
-                    'Adı: ${name ?? "N/A"}',
-                    style: pw.TextStyle(fontSize: 16, color: textColor, font: ttf),
-                  ),
-                  pw.Text(
-                    'Kodu: ${trcode ?? "N/A"}',
-                    style: pw.TextStyle(fontSize: 16, color: textColor, font: ttf),
-                  ),
-                  pw.Text(
-                    'Tarih: ${date ?? "N/A"}',
-                    style: pw.TextStyle(fontSize: 16, color: textColor, font: ttf),
-                  ),
+                  _tableCell('Malzeme Adı', ttf, isHeader: true),
+                  _tableCell('Birim Fiyatı', ttf, isHeader: true),
+                  _tableCell('Adet', ttf, isHeader: true),
+                  _tableCell('Toplam Fiyat', ttf, isHeader: true),
                 ],
               ),
-            ),
-            pw.SizedBox(height: 16),
-            pw.Text(
-              'Detayları:',
-              style: pw.TextStyle(
-                fontSize: 18,
-                fontWeight: pw.FontWeight.bold,
-                color: headerColor,
-                font: ttf,
-              ),
-            ),
-            pw.SizedBox(height: 8),
-            // Table with the required columns
-            pw.Table(
-              border: pw.TableBorder.all(color: headerColor),
-              children: [
-                // Header row
-                pw.TableRow(
-                  decoration: pw.BoxDecoration(color: headerColor),
+              // Data Rows
+              ...faturalar.asMap().entries.map((entry) {
+                final index = entry.key;
+                final fatura = entry.value;
+                final isAlternate = index % 2 == 1;
+
+                return pw.TableRow(
+                  decoration: pw.BoxDecoration(
+                    color: isAlternate ? alternateRowColor : PdfColors.white,
+                  ),
                   children: [
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(
-                        'Malzeme Adı',
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.white,
-                          font: ttf,
-                        ),
-                      ),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(
-                        'Birim Fiyatı',
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.white,
-                          font: ttf,
-                        ),
-                      ),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(
-                        'Adet',
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.white,
-                          font: ttf,
-                        ),
-                      ),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(
-                        'Toplam Fiyat',
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.white,
-                          font: ttf,
-                        ),
-                      ),
-                    ),
+                    _tableCell(fatura.definitioN ?? "", ttf),
+                    _tableCell('${fatura.brmfyt?.toStringAsFixed(2) ?? "N/A"} TL', ttf),
+                    _tableCell('${fatura.amount ?? 0} adet', ttf),
+                    _tableCell('${fatura.nettotal.toString()} TL', ttf),
                   ],
-                ),
-                // Data rows
-                ...faturalar.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final fatura = entry.value;
-                  final isAlternate = index % 2 == 1;
-                  return pw.TableRow(
-                    decoration: pw.BoxDecoration(
-                      color: isAlternate ? alternateRowColor : PdfColors.white,
-                    ),
-                    children: [
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text(
-                          fatura.definitioN ?? "",
-                          style: pw.TextStyle(color: textColor, font: ttf),
-                        ),
-                      ),
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text(
-                          '${fatura.brmfyt?.toStringAsFixed(2) ?? "N/A"} TL',
-                          style: pw.TextStyle(color: textColor, font: ttf),
-                        ),
-                      ),
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text(
-                          '${fatura.amount ?? 0} adet',
-                          style: pw.TextStyle(color: textColor, font: ttf),
-                        ),
-                      ),
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text(
-                          '${fatura.nettotal.toString()} TL',
-                          style: pw.TextStyle(color: textColor, font: ttf),
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ],
-            ),
-          ],
-        );
+                );
+              }).toList(),
+            ],
+          ),
+        ];
       },
     ),
   );
@@ -305,5 +222,26 @@ class FaturaDetayDialog extends StatelessWidget {
     text: 'Fatura Detayları: LogicalRef - $logicalRef',
   );
 }
+
+pw.Widget _tableCell(String text, pw.Font ttf, {bool isHeader = false}) {
+  return pw.Padding(
+    padding: const pw.EdgeInsets.all(8),
+    child: pw.Align(
+      alignment: pw.Alignment.centerLeft, // Align all text to the left
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          font: ttf,
+          fontSize: isHeader ? 12 : 10,
+          fontWeight: isHeader ? pw.FontWeight.bold : pw.FontWeight.normal,
+          color: isHeader ? PdfColors.white : PdfColor.fromHex('#212121'),
+        ),
+      ),
+    ),
+  );
+}
+
+
+
 
 }

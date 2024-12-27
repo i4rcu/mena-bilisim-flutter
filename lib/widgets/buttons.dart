@@ -1,4 +1,6 @@
+import 'package:fitness_dashboard_ui/bloc/bloc/alinan_faturala_bloc/alinan_faturalar_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/bankalar_bloc/bankalar_bloc.dart';
+import 'package:fitness_dashboard_ui/bloc/bloc/bloc/kasalar_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/cari_hesaplar_bloc/cari_hesap_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/dropdown_bloc/dropdown_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/dropdown_bloc/dropdown_event.dart';
@@ -51,6 +53,9 @@ class _ButtonsState extends State<Buttons> {
     final dropdownBloc = BlocProvider.of<DropdownBloc>(context);
     final cari = BlocProvider.of<CariHesapBloc>(context);
     final banka = BlocProvider.of<BankalarBloc>(context);
+    final alis = BlocProvider.of<AlinanFaturalarBloc>(context);
+        final kasa = BlocProvider.of<kasalarBloc>(context);
+
 
     return BlocListener<DropdownBloc, DropdownState>(
       listener: (context, state) {
@@ -59,6 +64,8 @@ class _ButtonsState extends State<Buttons> {
           if (state.selectedFirma != null) {
             cari.add(FetchCariHesaplar("tablePrefix", "tableSuffix"));
             banka.add(FetchBankalar());
+            alis.add(LoadAlinanAndSatisFaturalar(prefix: "", suffix: ""));
+            kasa.add(Fetchkasalar());
             _hasFetchedData = true; // Mark as fetched
           }
         }

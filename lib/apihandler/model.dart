@@ -128,7 +128,35 @@ class KasaDto {
     };
   }
 }
+class KasaDetaylar {
+  String? kasaAdi;
+  String? cariHesap;
+  String? islem;
+  int? tutar;
+  String? tarih;
 
+  KasaDetaylar({this.kasaAdi, this.cariHesap, this.islem, this.tutar,this.tarih});
+
+  KasaDetaylar.fromJson(Map<String, dynamic> json) {
+    kasaAdi = json['kasa_adi'];
+    cariHesap = json['cari_hesap'];
+    islem = json['islem'];
+    tutar = json['tutar'];
+    tarih = json['tarih'];
+    
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['kasa_adi'] = this.kasaAdi;
+    data['cari_hesap'] = this.cariHesap;
+    data['islem'] = this.islem;
+    data['tutar'] = this.tutar;
+    data['tarih'] = this.tarih;
+
+    return data;
+  }
+}
 class CariHesap {
   final int logicalRef;
   final String code;
@@ -158,6 +186,58 @@ class CariHesap {
       'name': name,
       'bakiye': bakiye,
     };
+  }
+}
+class HareketliCariler {
+  double? tutar;
+  String? code;
+  String? definition;
+  String? tel;
+  int? logicalref;
+
+  HareketliCariler({this.tutar, this.code, this.definition, this.tel});
+
+  HareketliCariler.fromJson(Map<String, dynamic> json) {
+    tutar = json['tutar'].toDouble();
+    code = json['code'];
+    definition = json['definition'];
+    tel = json['tel'];
+    logicalref = json['logicalref'];
+
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['tutar'] = this.tutar;
+    data['code'] = this.code;
+    data['definition'] = this.definition;
+    data['tel'] = this.tel;
+    data['logicalref'] = this.logicalref;
+    return data;
+  }
+}
+class HareketsizCariler {
+  String? code;
+  String? definition;
+  String? tel;
+  int? logicalref;
+
+  HareketsizCariler({this.code, this.definition, this.tel, this.logicalref});
+
+  HareketsizCariler.fromJson(Map<String, dynamic> json) {
+    code = json['code'];
+    definition = json['definition'];
+    tel = json['tel'];
+    logicalref = json['logicalref'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['code'] = this.code;
+    data['definition'] = this.definition;
+    data['tel'] = this.tel;
+    data['logicalref'] = this.logicalref;
+    return data;
   }
 }
 
@@ -241,13 +321,15 @@ class Banka {
   String? banka;
   String? hesap;
   double? bakiye;
+  int? logicalref;
 
-  Banka({this.banka, this.hesap, this.bakiye});
+  Banka({this.banka, this.hesap, this.bakiye,this.logicalref});
 
   Banka.fromJson(Map<String, dynamic> json) {
     banka = json['banka'];
     hesap = json['hesap'];
     bakiye = json['bakiye']?.toDouble();
+     logicalref = json['logicalref'];
   }
 
   Map<String, dynamic> toJson() {
@@ -255,6 +337,35 @@ class Banka {
     data['banka'] = this.banka;
     data['hesap'] = this.hesap;
     data['bakiye'] = this.bakiye;
+    data['logicalref'] = this.logicalref;
+    return data;
+  }
+}
+class BankaDetaylari {
+  String? bankaAdi;
+  String? hesapAdi;
+  String? islem;
+  double? tutar;
+  String? tarih;
+
+  BankaDetaylari(
+      {this.bankaAdi, this.hesapAdi, this.islem, this.tutar, this.tarih});
+
+  BankaDetaylari.fromJson(Map<String, dynamic> json) {
+    bankaAdi = json['banka_adi'];
+    hesapAdi = json['hesap_adi'];
+    islem = json['islem'];
+    tutar = json['tutar']?.toDouble();;
+    tarih = json['tarih'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['banka_adi'] = this.bankaAdi;
+    data['hesap_adi'] = this.hesapAdi;
+    data['islem'] = this.islem;
+    data['tutar'] = this.tutar;
+    data['tarih'] = this.tarih;
     return data;
   }
 }

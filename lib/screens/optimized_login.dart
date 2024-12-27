@@ -8,6 +8,7 @@ import 'package:fitness_dashboard_ui/screens/admin_screen.dart';
 import 'package:fitness_dashboard_ui/screens/main_screen.dart';
 import 'package:fitness_dashboard_ui/screens/settings.dart';
 import 'package:fitness_dashboard_ui/UserSession.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPageOptimized extends StatefulWidget {
   @override
@@ -137,15 +138,23 @@ class _LoginPageState extends State<LoginPageOptimized> {
                 child: Column(
                   children: <Widget>[
                     const SizedBox(height: 40),
-                    _buildInputCard(),
+                    InputCard(
+                      usernameController: _usernameController,
+                      passwordController: _passwordController,
+                    ),
                     const SizedBox(height: 20),
-                    _buildRememberMeCheckbox(),
+                    RememberMeCheckbox(rememberMe: _rememberMe),
                     const SizedBox(height: 20),
-                    _buildLoginButton(context),
+                    LoginButton(
+                      usernameController: _usernameController,
+                      passwordController: _passwordController,
+                    ),
                     const SizedBox(height: 20),
                     const Text("IP'nizi ayarlayın", style: TextStyle(color: Colors.grey)),
                     const SizedBox(height: 10),
-                    _buildSettingsButton(context),
+                    SettingsButton(),
+                    const SizedBox(height: 20),
+                    WhatsAppButton(),
                   ],
                 ),
               ),
@@ -155,8 +164,19 @@ class _LoginPageState extends State<LoginPageOptimized> {
       ),
     );
   }
+}
 
-  Widget _buildInputCard() {
+class InputCard extends StatelessWidget {
+  final TextEditingController usernameController;
+  final TextEditingController passwordController;
+
+  const InputCard({
+    required this.usernameController,
+    required this.passwordController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -171,19 +191,27 @@ class _LoginPageState extends State<LoginPageOptimized> {
       ),
       child: Column(
         children: <Widget>[
-          _buildInputField(controller: _usernameController, hintText: "Kullanıcı adı"),
-          _buildInputField(
-            controller: _passwordController,
-            hintText: "Şifre",
-            obscureText: true,
-          ),
+          InputField(controller: usernameController, hintText: "Kullanıcı adı"),
+          InputField(controller: passwordController, hintText: "Şifre", obscureText: true),
         ],
       ),
     );
   }
+}
 
-  Widget _buildInputField(
-      {required TextEditingController controller, required String hintText, bool obscureText = false}) {
+class InputField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hintText;
+  final bool obscureText;
+
+  const InputField({
+    required this.controller,
+    required this.hintText,
+    this.obscureText = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: TextField(
@@ -207,18 +235,25 @@ class _LoginPageState extends State<LoginPageOptimized> {
       ),
     );
   }
+}
 
-  Widget _buildRememberMeCheckbox() {
+class RememberMeCheckbox extends StatelessWidget {
+  final ValueNotifier<bool> rememberMe;
+
+  const RememberMeCheckbox({required this.rememberMe});
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
         ValueListenableBuilder<bool>(
-          valueListenable: _rememberMe,
+          valueListenable: rememberMe,
           builder: (context, value, child) {
             return Checkbox(
               activeColor: Colors.orange[600],
               value: value,
               onChanged: (bool? newValue) {
-                _rememberMe.value = newValue ?? false;
+                rememberMe.value = newValue ?? false;
               },
             );
           },
@@ -227,13 +262,24 @@ class _LoginPageState extends State<LoginPageOptimized> {
       ],
     );
   }
+}
 
-  Widget _buildLoginButton(BuildContext context) {
+class LoginButton extends StatelessWidget {
+  final TextEditingController usernameController;
+  final TextEditingController passwordController;
+
+  const LoginButton({
+    required this.usernameController,
+    required this.passwordController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialButton(
       onPressed: () {
         context.read<LoginBloc>().add(LoginSubmitted(
-              username: _usernameController.text,
-              password: EncryptionHelper.encryptPassword(_passwordController.text),
+              username: usernameController.text,
+              password: EncryptionHelper.encryptPassword(passwordController.text),
             ));
       },
       height: 50,
@@ -247,8 +293,11 @@ class _LoginPageState extends State<LoginPageOptimized> {
       ),
     );
   }
+}
 
-  Widget _buildSettingsButton(BuildContext context) {
+class SettingsButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return MaterialButton(
       onPressed: () {
         Navigator.of(context).push(
@@ -265,6 +314,31 @@ class _LoginPageState extends State<LoginPageOptimized> {
         ),
       ),
     );
+  }
+}
+
+class WhatsAppButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      onPressed: _openWhatsApp,
+      height: 50,
+      color: Colors.green,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+      child: const Center(
+        child: Text(
+          "Teknik Destek",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openWhatsApp() async {
+    final phone = "+905373947885"; // Your WhatsApp number
+    final message = Uri.encodeComponent("Merhaba, destek için yazıyorum.");
+    final url = "https://wa.me/$phone?text=$message";
+    await launchUrl(Uri.parse(url));
   }
 }
 

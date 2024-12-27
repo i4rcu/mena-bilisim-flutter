@@ -10,6 +10,8 @@ import 'package:fitness_dashboard_ui/screens/main_screen.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/cariler_sekme/cari_hesap_list_page.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/cariler_sekme/en_cok_satilan_cariler.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/bankalar_sekme/bankalar_list_page.dart';
+import 'package:fitness_dashboard_ui/side_menu_list/cariler_sekme/hareketli_cariler.dart';
+import 'package:fitness_dashboard_ui/side_menu_list/cariler_sekme/hareketsiz_cariler.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/cek_ve_senet_sekme/cek_ve_senet.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/faturalar_sekmeler/alinan_fatualar.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/faturalar_sekmeler/faturla.dart';
@@ -255,7 +257,26 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
           ),
         ),
       );
-    } else if (adi == "Cari Hesaplar" &&
+      
+    } else if (adi == "Cari Hesaplar" && subItem == "Hareketli Cari Hesaplar") {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => CariHesapBloc(ApiHandler()),
+            child: ClientTotalsPage(),
+          ),
+        ),
+      );
+    }else if (adi == "Cari Hesaplar" && subItem == "Hareketsiz Cari Hesaplar") {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => CariHesapBloc(ApiHandler()),
+            child: HareketsizCarilerPage(),
+          ),
+        ),
+      );
+    }else if (adi == "Cari Hesaplar" &&
         subItem == "En Çok Satış Yapılan Cari Hesaplar Turar Bazlı") {
       Navigator.push(
         context,

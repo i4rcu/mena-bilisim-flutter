@@ -233,6 +233,31 @@ class ApiHandler {
       throw Exception('Failed to load Kasa details');
     }
   }
+  Future<List<KasaDto>> fetchKasaDetailsString(
+      String tablePrefix, String tableSuffix) async {
+    final response = await http.get(Uri.parse(
+        '$baseUri/FirmPeriods/GetKasaDetails/${tablePrefix}/${tableSuffix}'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((json) => KasaDto.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load Kasa details');
+    }
+  }
+  Future<List<KasaDetaylar>> fetchoneKasaDetails(
+      String tablePrefix, String tableSuffix,int logicalref) async {
+    final response = await http.get(Uri.parse(
+        '$baseUri/FirmPeriods/GetOneKasaDetails/${tablePrefix}/${tableSuffix}/${logicalref}'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      print(data);
+      return data.map((json) => KasaDetaylar.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load Kasa details');
+    }
+  }
 
   Future<List<CariHesap>> fetchCariHesaplar(String? tablePrefix, String? tableSuffix) async {
   final url = '$baseUri/FirmPeriods/GetCariHesaplar/$tablePrefix/$tableSuffix';
@@ -241,6 +266,29 @@ class ApiHandler {
   if (response.statusCode == 200) {
     List jsonResponse = json.decode(response.body);
     return jsonResponse.map((data) => CariHesap.fromJson(data)).toList();
+  } else {
+    throw Exception('Failed to load cari hesaplar');
+  }
+}
+
+Future<List<HareketliCariler>> fetchHareketliCariler(String? tablePrefix, String? tableSuffix,String _startDate , String _endDate) async {
+  final url = '$baseUri/FirmPeriods/GetHareketliCariler/$tablePrefix/$tableSuffix/$_startDate/$_endDate';
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    List jsonResponse = json.decode(response.body);
+    return jsonResponse.map((data) => HareketliCariler.fromJson(data)).toList();
+  } else {
+    throw Exception('Failed to load cari hesaplar');
+  }
+}
+Future<List<HareketsizCariler>> fetchHareketsizCariler(String? tablePrefix, String? tableSuffix,String _startDate , String _endDate) async {
+  final url = '$baseUri/FirmPeriods/GetHareketsizCariler/$tablePrefix/$tableSuffix/$_startDate/$_endDate';
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    List jsonResponse = json.decode(response.body);
+    return jsonResponse.map((data) => HareketsizCariler.fromJson(data)).toList();
   } else {
     throw Exception('Failed to load cari hesaplar');
   }
@@ -277,7 +325,18 @@ Future<List<EnCokSatilanCariler>> fetchEnCokSatilanCariHesaplar(String? tablePre
     }
   }
 
-  Future<List<Banka>> fetchBankaHesapDetails(String? tablePrefix, String? tableSuffix) async {
+  Future<List<BankaDetaylari>> fetchBankaDetaylar(String? tablePrefix, String? tableSuffix,int? logicalref) async {
+  final url = '$baseUri/FirmPeriods/GetBankaDetaylari/$tablePrefix/$tableSuffix/$logicalref';
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    List jsonResponse = json.decode(response.body);
+    return jsonResponse.map((data) => BankaDetaylari.fromJson(data)).toList();
+  } else {
+    throw Exception('Failed to load banka hesap details');
+  }
+}
+Future<List<Banka>> fetchBankalar(String? tablePrefix, String? tableSuffix) async {
   final url = '$baseUri/FirmPeriods/GetBankaHesaplar/$tablePrefix/$tableSuffix';
   final response = await http.get(Uri.parse(url));
 

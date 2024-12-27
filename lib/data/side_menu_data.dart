@@ -18,6 +18,8 @@ class SideMenuData {
     MenuModel(icon: Icons.person, title: 'Cari Hesaplar', subMenu: [
       'Cari Hesaplar',
       'En Çok Satış Yapılan Cari Hesaplar Turar Bazlı',
+      'Hareketli Cari Hesaplar',
+      'Hareketsiz Cari Hesaplar'
     ]),
     MenuModel(icon: Icons.agriculture_rounded, title: 'Malzemeler', subMenu: [
       'Hareket Görmeyen Malzemeler',

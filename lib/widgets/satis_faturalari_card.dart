@@ -1,10 +1,8 @@
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
-import 'package:fitness_dashboard_ui/apihandler/model.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/alinan_faturala_bloc/alinan_faturalar_bloc.dart';
 import 'package:fitness_dashboard_ui/side_menu_list/faturalar_sekmeler/satis.faturalari.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 class SatisFaturalari extends StatelessWidget {
   final bool isDesktop;
@@ -99,84 +97,6 @@ class SatisFaturalari extends StatelessWidget {
     );
   }
 
-  void _showKasaListPopup(BuildContext context, List<KasaDto> kasalar, bool isDesktop) {
-  final formatter = NumberFormat('#,##0.00', 'tr_TR'); // Ensure zero is handled as 0.00
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: Color.fromRGBO(36, 64, 72, 50),
-        title: Text(
-          'Kasalar',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: isDesktop ? 20 : 16, // Larger font size for desktop
-          ),
-        ),
-        content: Container(
-          height: 400,
-          width: double.maxFinite,
-          child: kasalar.isEmpty
-              ? Center(
-                  child: Text(
-                    'Henüz herhangi bir kasa bilgileri girilmemiştir.',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: isDesktop ? 18 : 14, // Larger font size for desktop
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: kasalar.length,
-                  itemBuilder: (context, index) {
-                    final kasa = kasalar[index];
-                    final bakiye = kasa.bakiye;
-                    final bakiyeTextColor = bakiye >= 0
-                        ? Colors.green.shade400
-                        : Color.fromARGB(255, 255, 20, 3);
-                    final formattedBakiye = formatter.format(bakiye.abs());
-                    final bakiyeText = bakiye >= 0
-                        ? '$formattedBakiye (B)'
-                        : '$formattedBakiye (A)';
-
-                    return ListTile(
-                      title: Text(
-                        kasa.name,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isDesktop ? 18 : 14, // Larger font size for desktop
-                        ),
-                      ),
-                      subtitle: Text(
-                        'Bakiye: $bakiyeText',
-                        style: TextStyle(
-                          color: bakiyeTextColor,
-                          fontSize: isDesktop ? 16 : 12, // Larger font size for desktop
-                        ),
-                      ),
-                    );
-                  },
-                ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text(
-              'Kapat',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: isDesktop ? 16 : 12, // Larger font size for desktop
-              ),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+  
 
 } 

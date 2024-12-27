@@ -32,12 +32,14 @@ dependencies:
   excel: ^4.0.6
   open_file: ^3.5.10
   pdf: ^3.11.1
+  url_launcher: ^6.3.1
   share_plus: ^10.1.2
   printing: ^5.13.4
 dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+
 flutter:
 
   uses-material-design: true
@@ -48,17 +50,17 @@ flutter:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: "AppIcon"
-  image_path: "assets/icons/mena.png"
+  image_path: "assets/images/playstore.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   web:
     generate: true
-    image_path: "assets/icons/mena.png"
+    image_path: "assets/images/playstore.png"
     background_color: "#hexcode"
     theme_color: "#hexcode"
   windows:
     generate: true
-    image_path: "assets/icons/mena.png"
+    image_path: "assets/images/playstore.png"
     icon_size: 48 # min:48, max:256, default: 48
   macos:
     generate: true
-    image_path: "assets/icons/mena.png"
+    image_path: "assets/images/playstore.png"

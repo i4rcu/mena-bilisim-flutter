@@ -76,3 +76,32 @@ class EnCokSatilanCarilerLoaded extends CariHesapState {
 
   EnCokSatilanCarilerLoaded(this.enCokSatilanCariler);
 }
+
+
+class HareketliCariHesapInitial extends CariHesapState {}
+class HareketliCariHesapLoading extends CariHesapState {}
+class HareketliCariHesapLoaded extends CariHesapState {
+  final List<HareketliCariler> hareketli_cariler;
+
+  HareketliCariHesapLoaded(this.hareketli_cariler);
+}
+
+class HareketliCariHesapError extends CariHesapState {
+  final String message;
+
+  HareketliCariHesapError(this.message);
+}
+
+class HareketsizCariHesapInitial extends CariHesapState {}
+class HareketsizCariHesapLoading extends CariHesapState {}
+class HareketsizCariHesapLoaded extends CariHesapState {
+  final List<HareketsizCariler> hareketsiz_cariler;
+
+  HareketsizCariHesapLoaded(this.hareketsiz_cariler);
+}
+
+class HareketsizCariHesapError extends CariHesapState {
+  final String message;
+
+  HareketsizCariHesapError(this.message);
+}

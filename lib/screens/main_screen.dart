@@ -2,6 +2,7 @@ import 'package:fitness_dashboard_ui/UserSession.dart';
 import 'package:fitness_dashboard_ui/apihandler/api_handler.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/admin_bloc/bloc/admin_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/alinan_faturala_bloc/alinan_faturalar_bloc.dart';
+import 'package:fitness_dashboard_ui/bloc/bloc/bloc/kasalar_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/cari_hesaplar_bloc/cari_hesap_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/dropdown_bloc/dropdown_bloc.dart';
 import 'package:fitness_dashboard_ui/bloc/bloc/login_bloc/login_bloc.dart';
@@ -48,6 +49,7 @@ class MainScreen extends StatelessWidget {
           BlocProvider(create: (context) => MalzemelerBloc(ApiHandler())),
           BlocProvider(create: (context) => CariHesapBloc(ApiHandler())),
           BlocProvider(create: (context) => AdminBloc(ApiHandler())..add(FetchYetkiler(UserSession().userId!))),
+          BlocProvider(create: (context) => kasalarBloc(ApiHandler())..add(Fetchkasalar()))
         ],
         child:
          SafeArea(
